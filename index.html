@@ -8,15 +8,11 @@
     body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 20px; }
     h1 { text-align: center; color: #8B0000; }
     .produtos { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
-    .produto { background: white; padding: 15px; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); text-align: center; transition: transform 0.3s; }
-    .produto:hover { transform: translateY(-5px); }
-    .produto img { width: 100%; height: 200px; object-fit: cover; border-radius: 8px; }
+    .produto { background: white; padding: 15px; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); text-align: center; }
     .produto h3 { margin: 10px 0 5px; color: #333; }
-    .produto p { margin: 5px 0; color: #666; }
-    .botao { margin-top: 10px; padding: 10px 15px; background: #8B0000; color: white; border: none; border-radius: 5px; cursor: pointer; transition: background 0.3s; }
+    .botao { margin-top: 10px; padding: 10px 15px; background: #8B0000; color: white; border: none; border-radius: 5px; cursor: pointer; }
     .botao:hover { background: #a30000; }
-    .finalizar { display: block; margin: 30px auto; padding: 15px 30px; background: #228B22; color: white; border: none; border-radius: 10px; font-size: 16px; cursor: pointer; transition: background 0.3s; }
-    .finalizar:hover { background: #2E8B57; }
+    .finalizar { display: block; margin: 30px auto; padding: 15px 30px; background: green; color: white; border: none; border-radius: 10px; font-size: 16px; cursor: pointer; }
     .carrinho-contador { 
       position: fixed; top: 20px; right: 20px; 
       background: #8B0000; color: white; 
@@ -38,58 +34,70 @@
 
     let carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
 
-    // Atualiza contador do carrinho
     function atualizarContador() {
       document.getElementById('carrinhoContador').textContent = carrinho.length;
     }
 
-    // Carrega produtos
-    fetch(url)
-      .then(res => res.json())
-      .then(data => {
-        const container = document.getElementById("produtos");
-        data.forEach((produto, index) => {
-          const card = document.createElement("div");
-          card.className = "produto";
-          card.innerHTML = `
-            <img src="${produto["Link Imagem"]}" alt="${produto["Nome do Vinho"]}">
-            <h3>${produto["Nome do Vinho"]}</h3>
-            <p>${produto["Descrição"]}</p>
-            <p><strong>R$ ${produto["Preço"].toFixed(2)}</strong></p>
-            <button class="botao" onclick='adicionarCarrinho(${JSON.stringify(produto)})'>Adicionar ao carrinho</button>
+    function carregarProdutos() {
+      fetch(url)
+        .then(res => res.json())
+        .then(data => {
+          const container = document.getElementById("produtos");
+          
+          // Limpa mensagens de erro anteriores
+          container.innerHTML = '';
+          
+          data.forEach(produto => {
+            const card = document.createElement("div");
+            card.className = "produto";
+            card.innerHTML = `
+              <h3>${produto["Nome do Vinho"] || produto["Nome do Vinho"]}</h3>
+              <p><strong>R$ ${Number(produto["Preço"]).toFixed(2)}</strong></p>
+              <button class="botao" onclick='adicionarCarrinho(${JSON.stringify({
+                nome: produto["Nome do Vinho"] || produto["Nome do Vinho"],
+                preco: produto["Preço"]
+              })})'>Adicionar ao carrinho</button>
+            `;
+            container.appendChild(card);
+          });
+        })
+        .catch(error => {
+          console.error("Erro:", error);
+          
+          // Mensagem de erro simplificada
+          document.getElementById("produtos").innerHTML = `
+            <div style="grid-column:1/-1; text-align:center; color:red">
+              Erro ao carregar produtos. Recarregue a página.
+            </div>
           `;
-          container.appendChild(card);
+          
+          // Dados de teste caso a API falhe
+          const dadosTeste = [
+            { "Nome do Vinho": "Vinho Tinto Teste", "Preço": 50.00 },
+            { "Nome do Vinho": "Vinho Branco Teste", "Preço": 45.00 }
+          ];
+          
+          dadosTeste.forEach(produto => {
+            const card = document.createElement("div");
+            card.className = "produto";
+            card.innerHTML = `
+              <h3>${produto["Nome do Vinho"]}</h3>
+              <p><strong>R$ ${produto["Preço"].toFixed(2)}</strong></p>
+              <button class="botao" onclick='adicionarCarrinho(${JSON.stringify({
+                nome: produto["Nome do Vinho"],
+                preco: produto["Preço"]
+              })})'>Adicionar ao carrinho</button>
+            `;
+            document.getElementById("produtos").appendChild(card);
+          });
         });
-      })
-      .catch(error => {
-        console.error("Erro ao carregar produtos:", error);
-        document.getElementById("produtos").innerHTML = "<p>Não foi possível carregar os produtos. Por favor, tente novamente mais tarde.</p>";
-      });
+    }
 
     function adicionarCarrinho(produto) {
       carrinho.push(produto);
       localStorage.setItem('carrinho', JSON.stringify(carrinho));
       atualizarContador();
-      
-      // Feedback visual
-      const feedback = document.createElement('div');
-      feedback.textContent = `${produto["Nome do Vinho"]} adicionado!`;
-      feedback.style.position = 'fixed';
-      feedback.style.bottom = '20px';
-      feedback.style.left = '50%';
-      feedback.style.transform = 'translateX(-50%)';
-      feedback.style.backgroundColor = '#8B0000';
-      feedback.style.color = 'white';
-      feedback.style.padding = '10px 20px';
-      feedback.style.borderRadius = '5px';
-      feedback.style.zIndex = '1000';
-      document.body.appendChild(feedback);
-      
-      setTimeout(() => {
-        feedback.style.opacity = '0';
-        feedback.style.transition = 'opacity 0.5s';
-        setTimeout(() => document.body.removeChild(feedback), 500);
-      }, 2000);
+      alert(`${produto.nome} adicionado ao carrinho!`);
     }
 
     function enviarCarrinho() {
@@ -98,41 +106,30 @@
         return;
       }
       
-      let mensagem = "Olá! Gostaria de comprar os seguintes vinhos:\n\n";
+      let mensagem = "Olá! Gostaria de comprar:\n\n";
       let total = 0;
       
-      // Agrupa itens iguais
-      const itensAgrupados = {};
-      carrinho.forEach(p => {
-        const key = p["Nome do Vinho"];
-        if (!itensAgrupados[key]) {
-          itensAgrupados[key] = { ...p, quantidade: 1 };
-        } else {
-          itensAgrupados[key].quantidade++;
-        }
+      carrinho.forEach(item => {
+        mensagem += `- ${item.nome} (R$ ${Number(item.preco).toFixed(2)})\n`;
+        total += Number(item.preco);
       });
       
-      // Monta mensagem
-      Object.values(itensAgrupados).forEach(item => {
-        const subtotal = item["Preço"] * item.quantidade;
-        mensagem += `- ${item.quantidade}x ${item["Nome do Vinho"]} (R$ ${item["Preço"].toFixed(2)} cada) = R$ ${subtotal.toFixed(2)}\n`;
-        total += subtotal;
-      });
-      
-      mensagem += `\n*Total: R$ ${total.toFixed(2)}*`;
-      mensagem += `\n\nPor favor, confirme meu pedido. Obrigado!`;
+      mensagem += `\nTotal: R$ ${total.toFixed(2)}`;
       
       const urlWhats = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensagem)}`;
       window.open(urlWhats, '_blank');
       
-      // Limpa carrinho após envio
+      // Limpa o carrinho após envio
       carrinho = [];
       localStorage.removeItem('carrinho');
       atualizarContador();
     }
 
-    // Inicializa contador
-    atualizarContador();
+    // Inicializa o site
+    document.addEventListener('DOMContentLoaded', () => {
+      carregarProdutos();
+      atualizarContador();
+    });
   </script>
 </body>
 </html>
