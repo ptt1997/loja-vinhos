@@ -6,19 +6,29 @@
   <title>Lojinha de Vinhos</title>
   <style>
     body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 20px; }
-    h1 { text-align: center; }
+    h1 { text-align: center; color: #8B0000; }
     .produtos { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
-    .produto { background: white; padding: 15px; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); text-align: center; }
+    .produto { background: white; padding: 15px; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); text-align: center; transition: transform 0.3s; }
+    .produto:hover { transform: translateY(-5px); }
     .produto img { width: 100%; height: 200px; object-fit: cover; border-radius: 8px; }
-    .produto h3 { margin: 10px 0 5px; }
-    .produto p { margin: 5px 0; }
-    .botao { margin-top: 10px; padding: 10px 15px; background: #8B0000; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    .produto h3 { margin: 10px 0 5px; color: #333; }
+    .produto p { margin: 5px 0; color: #666; }
+    .botao { margin-top: 10px; padding: 10px 15px; background: #8B0000; color: white; border: none; border-radius: 5px; cursor: pointer; transition: background 0.3s; }
     .botao:hover { background: #a30000; }
-    .finalizar { display: block; margin: 30px auto; padding: 15px 30px; background: green; color: white; border: none; border-radius: 10px; font-size: 16px; cursor: pointer; }
+    .finalizar { display: block; margin: 30px auto; padding: 15px 30px; background: #228B22; color: white; border: none; border-radius: 10px; font-size: 16px; cursor: pointer; transition: background 0.3s; }
+    .finalizar:hover { background: #2E8B57; }
+    .carrinho-contador { 
+      position: fixed; top: 20px; right: 20px; 
+      background: #8B0000; color: white; 
+      border-radius: 50%; width: 25px; height: 25px; 
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
+    }
   </style>
 </head>
 <body>
   <h1>🍷 Lojinha de Vinhos</h1>
+  <div class="carrinho-contador" id="carrinhoContador">0</div>
   <div class="produtos" id="produtos"></div>
   <button class="finalizar" onclick="enviarCarrinho()">✉️ Enviar Pedido via WhatsApp</button>
 
@@ -26,8 +36,14 @@
     const url = "https://script.googleusercontent.com/macros/echo?user_content_key=AehSKLiWZu-jpb9Cu1v0fimD4TAzS-LPdNqGYTaY7Q5gQ95Gk_UVRU0s3fCb5BjseDNusVj0nGZoUTy7ejp-RvTB8prPRLIO-hD71oUE2kiDeSeOoUHCJmKWI9flKqtQvpCzHEcQWnSm--FexvVtielgt5Sxop-M7LUY1-ko-Kl1rfzpFMC-S9C2WBQXDJ8U0bPI88A88PR_LHeuXaS4DWPnO-pUqpG5YUKie3vVr9id7M4pYpEm1-Es02txq_CLFQ7Lq_n3xE6R8WTz9UevO0ywK3ZS37nzUA&lib=MnQYBkRsDbv4uLRxNoSIgA-aoJlzzZ8rm";
     const numeroWhatsApp = "5546920001218";
 
-    let carrinho = [];
+    let carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
 
+    // Atualiza contador do carrinho
+    function atualizarContador() {
+      document.getElementById('carrinhoContador').textContent = carrinho.length;
+    }
+
+    // Carrega produtos
     fetch(url)
       .then(res => res.json())
       .then(data => {
@@ -44,11 +60,36 @@
           `;
           container.appendChild(card);
         });
+      })
+      .catch(error => {
+        console.error("Erro ao carregar produtos:", error);
+        document.getElementById("produtos").innerHTML = "<p>Não foi possível carregar os produtos. Por favor, tente novamente mais tarde.</p>";
       });
 
     function adicionarCarrinho(produto) {
       carrinho.push(produto);
-      alert(`${produto["Nome do Vinho"]} adicionado ao carrinho!`);
+      localStorage.setItem('carrinho', JSON.stringify(carrinho));
+      atualizarContador();
+      
+      // Feedback visual
+      const feedback = document.createElement('div');
+      feedback.textContent = `${produto["Nome do Vinho"]} adicionado!`;
+      feedback.style.position = 'fixed';
+      feedback.style.bottom = '20px';
+      feedback.style.left = '50%';
+      feedback.style.transform = 'translateX(-50%)';
+      feedback.style.backgroundColor = '#8B0000';
+      feedback.style.color = 'white';
+      feedback.style.padding = '10px 20px';
+      feedback.style.borderRadius = '5px';
+      feedback.style.zIndex = '1000';
+      document.body.appendChild(feedback);
+      
+      setTimeout(() => {
+        feedback.style.opacity = '0';
+        feedback.style.transition = 'opacity 0.5s';
+        setTimeout(() => document.body.removeChild(feedback), 500);
+      }, 2000);
     }
 
     function enviarCarrinho() {
@@ -56,16 +97,42 @@
         alert("Seu carrinho está vazio!");
         return;
       }
-      let mensagem = "Olá! Gostaria de comprar:\n";
+      
+      let mensagem = "Olá! Gostaria de comprar os seguintes vinhos:\n\n";
       let total = 0;
+      
+      // Agrupa itens iguais
+      const itensAgrupados = {};
       carrinho.forEach(p => {
-        mensagem += `- ${p["Nome do Vinho"]} (R$ ${p["Preço"].toFixed(2)})\n`;
-        total += parseFloat(p["Preço"]);
+        const key = p["Nome do Vinho"];
+        if (!itensAgrupados[key]) {
+          itensAgrupados[key] = { ...p, quantidade: 1 };
+        } else {
+          itensAgrupados[key].quantidade++;
+        }
       });
-      mensagem += `\nTotal: R$ ${total.toFixed(2)}`;
-      const urlWhats = `https://wa.me/5546920001218?text=${encodeURIComponent(mensagem)}`;
+      
+      // Monta mensagem
+      Object.values(itensAgrupados).forEach(item => {
+        const subtotal = item["Preço"] * item.quantidade;
+        mensagem += `- ${item.quantidade}x ${item["Nome do Vinho"]} (R$ ${item["Preço"].toFixed(2)} cada) = R$ ${subtotal.toFixed(2)}\n`;
+        total += subtotal;
+      });
+      
+      mensagem += `\n*Total: R$ ${total.toFixed(2)}*`;
+      mensagem += `\n\nPor favor, confirme meu pedido. Obrigado!`;
+      
+      const urlWhats = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensagem)}`;
       window.open(urlWhats, '_blank');
+      
+      // Limpa carrinho após envio
+      carrinho = [];
+      localStorage.removeItem('carrinho');
+      atualizarContador();
     }
+
+    // Inicializa contador
+    atualizarContador();
   </script>
 </body>
 </html>
