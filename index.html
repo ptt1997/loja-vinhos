@@ -22,20 +22,60 @@
 <body>
     <header class="header">
         <h1>🍷 Lojinha de Vinhos</h1>
-        <div class="carrinho-contador">
+        <div class="carrinho-contador" onclick="mostrarCarrinho()">
             <i class="fas fa-shopping-cart"></i>
             <span id="carrinhoContador">0</span>
         </div>
     </header>
-
+    <div id="loadingMessage" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(255, 255, 255, 0.8); padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); z-index: 1000;">
+        <p>Carregando, por favor aguarde...</p>
+    </div>
+    <div class="filter-container">
+        <input type="text" id="searchInput" placeholder="Pesquisar por nome..." oninput="filtra()" />
+        <button onclick="mostrarFiltros()">Filtrar por Marca e Preço</button>
+    </div>
+    
+    <div id="filterModal" class="filter-modal" style="display: none;">
+        <div class="filter-content">
+            <span class="close" onclick="fecharFiltros()">&times;</span>
+            <h2>Filtros</h2>
+            <div>
+                <h3>Marcas</h3>
+                <select id="marcaSelect" multiple>
+                </select>
+            </div>
+            <div>
+                <h3>Faixa de Preço</h3>
+                <form class="price-range-form">
+                    <div>
+                        <input type="text" id="minPrice" placeholder="Mínimo" oninput="atualizaSliderMin()" />
+                        <span> - </span>
+                        <input type="text" id="maxPrice" placeholder="Máximo" oninput="atualizaSliderMax()" />
+                    </div>
+                </form>
+                <input type="range" id="priceSlider" min="0" max="10000" value="10000" oninput="atualizaPrecoDisplay()" />
+                <span id="priceRangeValue">0 - 10000</span>
+            </div>
+            <button onclick="fecharFiltros()">Aplicar Filtros</button>
+        </div>
+    </div>
 
     <div class="produtos" id="produtos"></div>
     <div id="pagination" style="text-align: center; margin-top: 20px;"></div>
-    <button class="finalizar" onclick="enviarCarrinho()">✉️ Enviar Pedido via WhatsApp</button>
+    <div id="cartMenu" class="cart-menu">
+        <div class="cart-header">
+            <h2>Seus Produtos</h2>
+            <button onclick="fecharCarrinho()">✖️</button>
+        </div>
+        <div id="cartItems" class="cart-items"></div>
+        <div class="cart-total">
+            <strong>Total: R$ <span id="totalValue">0.00</span></strong>
+        </div>
+    </div>
 
-    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- Custom JS -->
     <script src="assets/js/controla.js"></script>
 </body>
