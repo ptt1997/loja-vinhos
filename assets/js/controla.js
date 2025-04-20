@@ -1,5 +1,5 @@
 const url = "https://script.googleusercontent.com/macros/echo?user_content_key=AehSKLiWZu-jpb9Cu1v0fimD4TAzS-LPdNqGYTaY7Q5gQ95Gk_UVRU0s3fCb5BjseDNusVj0nGZoUTy7ejp-RvTB8prPRLIO-hD71oUE2kiDeSeOoUHCJmKWI9flKqtQvpCzHEcQWnSm--FexvVtielgt5Sxop-M7LUY1-ko-Kl1rfzpFMC-S9C2WBQXDJ8U0bPI88A88PR_LHeuXaS4DWPnO-pUqpG5YUKie3vVr9id7M4pYpEm1-Es02txq_CLFQ7Lq_n3xE6R8WTz9UevO0ywK3ZS37nzUA&lib=MnQYBkRsDbv4uLRxNoSIgA-aoJlzzZ8rm";
-const numeroWhatsApp = "5546920001218";
+const numeroWhatsApp = "5546988094374";
 var Vinhos = [];
 var VinhosTabela = [];
 var VinhosFiltados = [];
@@ -86,7 +86,14 @@ function renderPage(page) {
                         <i class="fas fa-plus"></i>
                     </button>
                 </div>
-                <button class="botao" onclick='adicionarCarrinho(${produto.id})'>Adicionar ao carrinho</button>
+                <button class="botao" onclick='adicionarCarrinho(${produto.id})'>
+                    <div id="adicionar-${produto.id}">
+                        Adicionar ao carrinho
+                    </div>
+                    <span class="check-message" id="adicionado-${produto.id}" style="display: none;">
+                        <i class="fas fa-check"></i> Adicionado!
+                    </span>
+                </button>
             </div>
         `;
     });
@@ -129,40 +136,54 @@ function renderPagination() {
 }
 
 function adicionarCarrinho(ind) {
-    let produto = Vinhos[ind]
+    let produto = Vinhos[ind];
     produto.quantidade = Number($("#quantidade-" + ind).val());
-    if (!produto.quantidade || produto.quantidade <= 0){
+    if (!produto.quantidade || produto.quantidade <= 0) {
         Swal.fire({
             icon: "error",
             title: "Oops...",
             text: "Informe uma quantidade!",
-          });
-        return
+        });
+        return;
     }
     carrinho.push(produto);
     localStorage.setItem('carrinho', JSON.stringify(carrinho));
     atualizarContador();
-    alert(`${produto.nome} adicionado ao carrinho!`);
+
+    const button =  document.getElementById("adicionar-"+ind);
+    // Oculta o botão e mostra a mensagem de adicionado
+    button.style.display = 'none'; // Oculta o botão
+    const checkMessage = document.getElementById("adicionado-"+ind);
+    checkMessage.style.display = 'block'; // Mostra a mensagem de adicionado
+
+    // Remove a mensagem após um tempo
+    setTimeout(() => {
+        checkMessage.style.display = 'none'; // Oculta a mensagem
+        button.style.display = 'inline-block'; // Mostra o botão novamente
+    }, 2000); // Duração da exibição da mensagem
 }
 
-function enviarCarrinho() {
+function enviarCarrinho(userName, userAddress) {
     if (carrinho.length === 0) {
         alert("Seu carrinho está vazio!");
         return;
     }
 
-    let mensagem = "Olá! Gostaria de comprar:\n\n";
+    let mensagem = `Olá ${userName}! Gostaria de comprar:\n\n`;
     let total = 0;
 
     carrinho.forEach(item => {
-        mensagem += `- ${item.nome} (R$ ${Number(item.preco).toFixed(2)})\n`;
-        total += Number(item.preco);
+        const itemTotal = item.preco * item.quantidade; // Calculate total for each item
+        mensagem += `${item.nome} - ${item.quantidade} - R$ ${itemTotal.toFixed(2)}\n`; // Format message
+        total += itemTotal; // Update total
     });
 
-    mensagem += `\nTotal: R$ ${total.toFixed(2)}`;
+    mensagem += `\nTotal do Pedido: R$ ${total.toFixed(2)}\nEndereço: ${userAddress}`; // Add total and address to message
 
     const urlWhats = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensagem)}`;
     window.open(urlWhats, '_blank');
+
+
 
     // Limpa o carrinho após envio
     carrinho = [];
@@ -343,5 +364,31 @@ function atualizaPrecoDisplay() {
     priceRangeValue.textContent = `${minPriceInput.value} - ${slider.value}`;
     maxPriceInput.value = slider.value; // Update max input when slider changes
     filtra();
+}
+function toggleFilterMenu() {
+    const filterMenu = document.getElementById("filterMenu");
+    filterMenu.classList.toggle("hidden");
+}
+function finalizarPedido(){
+
+    document.getElementById("orderModal").style.display = "block"; // Show the modal
+
+}
+function submitOrder() {
+    const userName = document.getElementById("userName").value;
+    const userAddress = document.getElementById("userAddress").value;
+
+    if (!userName || !userAddress) {
+        alert("Por favor, preencha todos os campos.");
+        return;
+    }
+
+    // You can pass userName and userAddress to enviarCarrinho if needed
+    enviarCarrinho(userName, userAddress); // Modify enviarCarrinho to accept these parameters
+    fecharModal(); // Close the modal
+}
+
+function fecharModal() {
+    document.getElementById("orderModal").style.display = "none"; // Hide the modal
 }
 // ajustar mensagem no whats e implementar para ao iniciar verificar se os produtos do carrinho ainda existem e limpar carrinho caso a mensagem já tenha sido enviada

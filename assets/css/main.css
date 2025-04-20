@@ -165,18 +165,23 @@ body {
     margin-top: 20px;
     font-size: 1.2em;
 }
-.filter-container {
-    margin: 20px;
+.filter-toggle {
+    cursor: pointer;
+    background-color: #8B0000;
+    color: white;
+    padding: 10px;
+    text-align: center;
+    border-radius: 5px;
+    margin: 10px;
 }
 
+.filter-container {
+    display: block; /* Show by default */
+    transition: transform 0.3s ease;
+}
 
-
-.filter-content {
-    background-color: #fefefe;
-    margin: 15% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
+.filter-container.hidden {
+    transform: translateX(-100%); /* Hide off-screen */
 }
 
 .close {
@@ -256,4 +261,17 @@ body {
 
 .pagination button:hover {
     background-color: #a30000; /* Lighter red on hover */
+}
+@keyframes buttonAnimation {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.button-animation {
+    animation: buttonAnimation 3.3s ease;
+}
+.check-message {
+    color: green; /* Cor verde para a mensagem */
+    margin-left: 10px; /* Espaçamento entre o botão e a mensagem */
 }
