@@ -1,11 +1,12 @@
 const url = "https://script.googleusercontent.com/macros/echo?user_content_key=AehSKLiWZu-jpb9Cu1v0fimD4TAzS-LPdNqGYTaY7Q5gQ95Gk_UVRU0s3fCb5BjseDNusVj0nGZoUTy7ejp-RvTB8prPRLIO-hD71oUE2kiDeSeOoUHCJmKWI9flKqtQvpCzHEcQWnSm--FexvVtielgt5Sxop-M7LUY1-ko-Kl1rfzpFMC-S9C2WBQXDJ8U0bPI88A88PR_LHeuXaS4DWPnO-pUqpG5YUKie3vVr9id7M4pYpEm1-Es02txq_CLFQ7Lq_n3xE6R8WTz9UevO0ywK3ZS37nzUA&lib=MnQYBkRsDbv4uLRxNoSIgA-aoJlzzZ8rm";
 const numeroWhatsApp = "5546920001218";
 var Vinhos = [];
+var VinhosTabela = [];
 var VinhosFiltados = [];
 var marcas = [];
 var maiorValor = 0;
 let carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
-const itemsPerPage = 12; // Number of items per page
+const itemsPerPage = 20; // Number of items per page
 let currentPage = 1; // Current page number
 
 // Função para inicializar quando o documento estiver pronto
@@ -30,6 +31,7 @@ function carregarProdutos() {
     fetch(url)
         .then(res => res.json())
         .then(data => {
+            VinhosTabela=data;
             Vinhos = data.map((produto,index) => ({
                 id:index,
                 descricao: produto.Descrição || "",
@@ -55,7 +57,6 @@ function carregarProdutos() {
         .finally(()=>{
             document.getElementById("loadingMessage").style.display = "none";
         })
-
 }
 
 function renderPage(page) {
@@ -76,8 +77,14 @@ function renderPage(page) {
                 <p class="descricao">${(produto.descricao)}</p>
                 <p><strong>Valor unitário: R$ ${formataNumeros(produto.preco)}</strong></p>
                 <div>
-                    <label for="quantidade-${produto.id}" >Quantidade: </label>
-                    <input id="quantidade-${produto.id}" name="quantidade-${produto.id}" type="number" max="99" min="0"  />
+                    <label for="quantidade-${produto.id}">Quantidade: </label>
+                    <button onclick="alterarQuantidade(${produto.id}, -1)" style="color: red; border-radius: 50%; width: 30px; height: 30px; border: none;">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    <input id="quantidade-${produto.id}" name="quantidade-${produto.id}" type="number" value="0" max="99" min="0" style="width: 50px; text-align: center;" />
+                    <button onclick="alterarQuantidade(${produto.id}, 1)" style="color: green; border-radius: 50%; width: 30px; height: 30px; border: none;">
+                        <i class="fas fa-plus"></i>
+                    </button>
                 </div>
                 <button class="botao" onclick='adicionarCarrinho(${produto.id})'>Adicionar ao carrinho</button>
             </div>
@@ -86,10 +93,22 @@ function renderPage(page) {
 
     if (VinhosFiltados.length === 0) {
         container.innerHTML = '<p>Nenhum produto encontrado.</p>'; // Display message if no products found
-    }else{
+    } else {
         container.innerHTML = produtosHTML;
     }
     renderPagination();
+}
+
+function alterarQuantidade(produtoId, delta) {
+    const input = document.getElementById(`quantidade-${produtoId}`);
+    let quantidade = Number(input.value) || 0; // Get current quantity or default to 0
+    quantidade += delta; // Adjust quantity by delta
+
+    // Ensure quantity stays within bounds
+    if (quantidade < 0) quantidade = 0;
+    if (quantidade > 99) quantidade = 99;
+
+    input.value = quantidade; // Update the input field
 }
 
 function renderPagination() {
@@ -246,12 +265,18 @@ async function carregaFiltros() {
     document.getElementById("minPrice").value = 0; // Set default min value
     document.getElementById("maxPrice").value = maiorValor; // Set default max value
     document.getElementById("priceRangeValue").textContent = `0 - ${maiorValor}`; // Display the initial range
+    carregarFiltros();
 }
 
 function filtra() {
     const pesquisa = document.getElementById("searchInput").value.toLowerCase();
-    const marcaSelect = document.getElementById("marcaSelect");
-    const selectedMarcas = Array.from(marcaSelect.selectedOptions).map(option => option.value);
+    const selectedIndexMarcas = Array.from(document.querySelectorAll('input[id^="marcas-"]:checked')).map(input => {
+        return parseInt(input.id.split('-')[1], 10); // Get the number after the hyphen
+    });
+    let selectedMarcas = [];
+    selectedIndexMarcas.forEach((item) => {
+       selectedMarcas.push(marcas[item])
+    });
     const minPrice = Number(document.getElementById("minPrice").value.replace('R$', '').replace('.', '').replace(',', '.')) || 0;
     const maxPrice = Number(document.getElementById("maxPrice").value.replace('R$', '').replace('.', '').replace(',', '.')) || Infinity;
 
@@ -272,11 +297,7 @@ function filtra() {
     });
     renderPage(1);
 }
-function mostrarFiltros() {
-    const filterModal = document.getElementById("filterModal");
-    filterModal.style.display = "block";
-    carregarFiltros(); // Load brands into the select
-}
+
 
 function fecharFiltros() {
     const filterModal = document.getElementById("filterModal");
@@ -284,35 +305,43 @@ function fecharFiltros() {
     filtra();
 }
 function carregarFiltros() {
-    const marcaSelect = document.getElementById("marcaSelect");
-    marcaSelect.innerHTML = ''; // Clear existing options
+    const marcaCheckboxes = document.getElementById("marcaCheckboxes");
+    marcaCheckboxes.innerHTML = ''; // Clear existing checkboxes
 
     // Populate the select with unique brands
-    marcas.forEach(marca => {
-        const option = document.createElement("option");
-        option.value = marca;
-        option.textContent = marca;
-        marcaSelect.appendChild(option);
+    marcas.forEach((marca,i) => {
+        const label = document.createElement("label");
+        label.innerHTML = `
+            <input type="checkbox" id="marcas-${i}" onchange="filtra()"> ${marca}
+        `;
+        marcaCheckboxes.appendChild(label);
     });
 }
 function atualizaSliderMin() {
     const minPriceInput = document.getElementById("minPrice");
     const slider = document.getElementById("priceSlider");
     const minValue = Number(minPriceInput.value.replace('R$', '').replace('.', '').replace(',', '.')) || 0;
-    slider.value = Math.max(minValue, 0); // Ensure the slider does not go below 0
+    slider.value = Math.max(maiorValor, 0); // Ensure the slider does not go below 0
     filtra(); // Reapply filters
+    atualizaPrecoDisplay(); // Update display
 }
 
 function atualizaSliderMax() {
-    const maxPriceInput = document.getElementById("maxPrice");
     const slider = document.getElementById("priceSlider");
-    const maxValue = Number(maxPriceInput.value.replace('R$', '').replace('.', '').replace(',', '.')) || 10000;
     slider.value = Math.min(maxValue, slider.max); // Ensure the slider does not exceed max
     filtra(); // Reapply filters
+    atualizaPrecoDisplay(); // Update display
 }
 
 function atualizaPrecoDisplay() {
     const slider = document.getElementById("priceSlider");
     const priceRangeValue = document.getElementById("priceRangeValue");
-    priceRangeValue.textContent = `0 - ${slider.value}`; // Update the displayed range
+    const minPriceInput = document.getElementById("minPrice");
+    const maxPriceInput = document.getElementById("maxPrice");
+
+    // Update the displayed range
+    priceRangeValue.textContent = `${minPriceInput.value} - ${slider.value}`;
+    maxPriceInput.value = slider.value; // Update max input when slider changes
+    filtra();
 }
+// ajustar mensagem no whats e implementar para ao iniciar verificar se os produtos do carrinho ainda existem e limpar carrinho caso a mensagem já tenha sido enviada

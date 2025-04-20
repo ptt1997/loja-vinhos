@@ -27,40 +27,33 @@
             <span id="carrinhoContador">0</span>
         </div>
     </header>
-    <div id="loadingMessage" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(255, 255, 255, 0.8); padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); z-index: 1000;">
+    <div id="loadingMessage" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.8); padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); z-index: 1000; display: flex; justify-content: center; align-items: center;">
         <p>Carregando, por favor aguarde...</p>
     </div>
-    <div class="filter-container">
-        <input type="text" id="searchInput" placeholder="Pesquisar por nome..." oninput="filtra()" />
-        <button onclick="mostrarFiltros()">Filtrar por Marca e Preço</button>
-    </div>
-    
-    <div id="filterModal" class="filter-modal" style="display: none;">
-        <div class="filter-content">
-            <span class="close" onclick="fecharFiltros()">&times;</span>
-            <h2>Filtros</h2>
-            <div>
-                <h3>Marcas</h3>
-                <select id="marcaSelect" multiple>
-                </select>
-            </div>
+
+    <input type="text" id="searchInput" placeholder="Pesquisar por nome..." oninput="filtra()" class="search-input" />
+    <div class="container" style="max-width: 100%;overflow-y: auto;padding-bottom: 125px;">
+        <div class="filter-container">
+            <h3>Marcas</h3>
+            <div id="marcaCheckboxes" class="marcas-filter"></div>
             <div>
                 <h3>Faixa de Preço</h3>
                 <form class="price-range-form">
-                    <div>
-                        <input type="text" id="minPrice" placeholder="Mínimo" oninput="atualizaSliderMin()" />
+                    <div style="display: flex; align-items: center;">
+                        <input type="text" id="minPrice" placeholder="Mínimo" oninput="atualizaSliderMin()" style="flex: 1; margin-right: 5px; width: 100px;" />
                         <span> - </span>
-                        <input type="text" id="maxPrice" placeholder="Máximo" oninput="atualizaSliderMax()" />
+                        <input type="text" id="maxPrice" placeholder="Máximo" oninput="atualizaSliderMax()" style="flex: 1; margin-left: 5px;width: 100px;" />
                     </div>
+                    <input type="range" id="priceSlider" min="0" max="10000" value="10000" oninput="atualizaPrecoDisplay()" />
+                    <span id="priceRangeValue">0 - </span>
                 </form>
-                <input type="range" id="priceSlider" min="0" max="10000" value="10000" oninput="atualizaPrecoDisplay()" />
-                <span id="priceRangeValue">0 - 10000</span>
             </div>
-            <button onclick="fecharFiltros()">Aplicar Filtros</button>
         </div>
+    
+        <div class="produtos" id="produtos"></div>
+        <div id="pagination" class="pagination"></div>
     </div>
-
-    <div class="produtos" id="produtos"></div>
+    
     <div id="pagination" style="text-align: center; margin-top: 20px;"></div>
     <div id="cartMenu" class="cart-menu">
         <div class="cart-header">
