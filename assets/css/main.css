@@ -44,7 +44,7 @@ body {
     display: flex;
     flex-direction: column;
     place-content: space-between;
-    height: 510px;
+   
     width: 300px; 
 }
 
@@ -327,4 +327,11 @@ body {
 .produtos-tabela th {
     background-color: #f2f2f2;
     color: black;
+}
+.produtos-tabela tr:nth-child(even) {
+    background-color: #f2f2f2; /* Light gray for odd rows */
+}
+
+.produtos-tabela tr:nth-child(odd) {
+    background-color: #ffffff; /* White for even rows */
 }

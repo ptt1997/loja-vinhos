@@ -79,7 +79,7 @@ function renderPage(page) {
             container.innerHTML += `
             <div class="produto">
                 <h3>${produto.nome}</h3>
-                <img src="${produto.imagem}" alt="${produto.nome}" style="width:100%; height:auto; cursor: pointer;" onclick="montadetalhes(${produto.id})"/>
+                <img src="${produto.imagem}" alt="${produto.nome}" style="width:270px; height:270px; cursor: pointer;" onclick="montadetalhes(${produto.id})"/>
                 <p class="descricao">${(produto.descricao)}</p>
                 <p><strong>Valor unitário: R$ ${formataNumeros(produto.preco)}</strong></p>
                 <div>
