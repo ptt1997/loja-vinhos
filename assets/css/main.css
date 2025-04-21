@@ -57,6 +57,11 @@ body {
     .produto {
         width: 200px; /* Configuração para dispositivos móveis */
     }
+    .imagensCard {
+        width:170px !important;
+        height:170px !important;
+    }
+
 }
 
 .produto h3 {
@@ -334,4 +339,10 @@ body {
 
 .produtos-tabela tr:nth-child(odd) {
     background-color: #ffffff; /* White for even rows */
+}
+
+.imagensCard {
+    width:270px; 
+    height:270px; 
+    cursor: pointer;
 }
