@@ -131,7 +131,7 @@ function renderPage(page) {
                             </span>
                         </button>
                     </td>
-                     <td>${produto.imagem !="assets/img/semfoto.jpeg" ? `<a href="${produto.imagem}">IMG</a>`: ""}</td>
+                     <td>${produto.imagem !="assets/img/semfoto.jpeg" ? `<button style="border-radius: 10px;" onclick="montadetalhes(${produto.id})"><i class="fas fa-camera"></i></button>`: ""}</td>
                 </tr>
             `;
         });
