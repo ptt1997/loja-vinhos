@@ -10,6 +10,7 @@ const itemsPerPage = 20; // Number of items per page
 let currentPage = 1; // Current page number
 let isCardView = true;
 let isfiltro = false;
+let totalCarrinho=0;
 
 // Função para inicializar quando o documento estiver pronto
 $(document).ready(function() {
@@ -304,6 +305,33 @@ function montadetalhes(index){
         confirmButtonText: "Fechar"
       });
 }
+function alterarQuantidadeCarrinho(produtoId,index, delta) {
+    // Find the product in the cart
+    const produto = carrinho.find(item => item.id === produtoId);
+    if (produto) {
+        // Update the quantity
+        produto.quantidade += delta;
+
+        // Ensure quantity stays within bounds
+        if (produto.quantidade <= 0){
+            removerDoCarrinho(index);
+            produto.quantidade = 0;
+        } 
+        if (produto.quantidade > 99) produto.quantidade = 99;
+
+        // Update the cart in localStorage
+        localStorage.setItem('carrinho', JSON.stringify(carrinho));
+
+        // Refresh the cart display
+        const qtdeIn = document.getElementById("carrinhoqtd-"+produtoId);
+        qtdeIn.innerHTML = 'Quantidade: '+produto.quantidade;
+        const qtdeTotaIn = document.getElementById("carrinhototalitem-"+produtoId);
+        qtdeTotaIn.innerHTML ="Valor: R$ "+formataNumeros(produto.preco * produto.quantidade);
+        const totalValueElement = document.getElementById("totalValue");
+        totalCarrinho+= delta*(produto.preco);
+        totalValueElement.textContent = formataNumeros(totalCarrinho);
+    }
+}
 function mostrarCarrinho() {
     const cartMenu = document.getElementById("cartMenu");
     const cartItemsContainer = document.getElementById("cartItems");
@@ -311,20 +339,27 @@ function mostrarCarrinho() {
 
     // Clear previous items
     cartItemsContainer.innerHTML = '';
-    let total = 0;
+    totalCarrinho = 0;
 
     // Loop through the cart and create HTML for each item
     carrinho.forEach((item, index) => {
         const itemTotal = item.preco * item.quantidade;
-        total += itemTotal;
+        totalCarrinho += itemTotal;
 
         cartItemsContainer.innerHTML += `
             <div class="cart-item">
                 <img src="${item.imagem}" alt="${item.nome}" />
                 <div>
                     <strong>${item.nome}</strong><br>
-                    Quantidade: ${item.quantidade}<br>
-                    Valor: R$ ${formataNumeros(itemTotal)}
+                    <span id="carrinhoqtd-${item.id}">Quantidade: ${item.quantidade}</span>
+                    <button onclick="alterarQuantidadeCarrinho(${item.id},${index}, -1)" style="color: red; border-radius: 50%; width: 20px; height: 20px; border: none;">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    <button onclick="alterarQuantidadeCarrinho(${item.id},${index}, 1)" style="color: green; border-radius: 50%; width: 20px; height: 20px; border: none;">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                    <br>
+                   <span id="carrinhototalitem-${item.id}"> Valor: R$ ${formataNumeros(itemTotal)}</span>
                 </div>
                 <button onclick="removerDoCarrinho(${index})">
                     <i class="fas fa-trash"></i>
@@ -334,7 +369,7 @@ function mostrarCarrinho() {
     });
 
     // Update total value
-    totalValueElement.textContent = formataNumeros(total);
+    totalValueElement.textContent = formataNumeros(totalCarrinho);
 
     // Show the cart menu
     cartMenu.style.right = '0';
