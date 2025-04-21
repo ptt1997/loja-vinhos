@@ -8,6 +8,8 @@ var maiorValor = 0;
 let carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
 const itemsPerPage = 20; // Number of items per page
 let currentPage = 1; // Current page number
+let isCardView = true;
+let isfiltro = false;
 
 // Função para inicializar quando o documento estiver pronto
 $(document).ready(function() {
@@ -26,7 +28,7 @@ function atualizarContador() {
 }
 
 function carregarProdutos() {
-    document.getElementById("loadingMessage").style.display = "block";
+    document.getElementById("loadingMessage").style.display = "flex";
 
     fetch(url)
         .then(res => res.json())
@@ -61,16 +63,20 @@ function carregarProdutos() {
 
 function renderPage(page) {
     const container = document.getElementById("produtos");
+    const table = document.getElementById("produtosTabela");
+    const tableBody = document.getElementById("produtosTabelaBody");
     container.innerHTML = '';
-    let produtosHTML = '';
+    tableBody.innerHTML = '';
 
-    // Calculate the start and end index for the current page
     const startIndex = (page - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
     const paginatedItems = VinhosFiltados.slice(startIndex, endIndex);
 
-    paginatedItems.forEach((produto) => {
-        produtosHTML += `
+    if (isCardView) {
+        container.style.display = 'grid';
+        table.style.display = 'none';
+        paginatedItems.forEach((produto) => {
+            container.innerHTML += `
             <div class="produto">
                 <h3>${produto.nome}</h3>
                 <img src="${produto.imagem}" alt="${produto.nome}" style="width:100%; height:auto; cursor: pointer;" onclick="montadetalhes(${produto.id})"/>
@@ -95,13 +101,45 @@ function renderPage(page) {
                     </span>
                 </button>
             </div>
-        `;
-    });
+            `;
+        });
+    } else {
+        container.style.display = 'none';
+        table.style.display = 'table';
+        paginatedItems.forEach((produto) => {
+            tableBody.innerHTML += `
+                <tr>
+                    <td>${produto.nome}</td>
+                    <td>${produto.descricao}</td>
+                    <td>R$ ${formataNumeros(produto.preco)}</td>
+                    <td>
+                        <input id="quantidade-${produto.id}" name="quantidade-${produto.id}" type="number" value="0" max="99" min="0" style="width: 50px; text-align: center;" />
+                    </td>
+                    <td>
+                        <button onclick="alterarQuantidade(${produto.id}, -1)" style="color: red; border-radius: 50%; width: 30px; height: 30px; border: none;">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                        <button onclick="alterarQuantidade(${produto.id}, 1)" style="color: green; border-radius: 50%; width: 30px; height: 30px; border: none;">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                        <button class="botao" onclick='adicionarCarrinho(${produto.id})'>
+                            <div id="adicionar-${produto.id}">
+                                Adicionar ao carrinho
+                            </div>
+                            <span class="check-message" id="adicionado-${produto.id}" style="display: none;">
+                                <i class="fas fa-check"></i> Adicionado!
+                            </span>
+                        </button>
+                    </td>
+                     <td>${produto.imagem !="assets/img/semfoto.jpeg" ? `<a href="${produto.imagem}">IMG</a>`: ""}</td>
+                </tr>
+            `;
+        });
+    }
 
     if (VinhosFiltados.length === 0) {
         container.innerHTML = '<p>Nenhum produto encontrado.</p>'; // Display message if no products found
-    } else {
-        container.innerHTML = produtosHTML;
+        table.style.display = 'none';
     }
     renderPagination();
 }
@@ -124,15 +162,64 @@ function renderPagination() {
 
     const totalPages = Math.ceil(VinhosFiltados.length / itemsPerPage);
 
-    for (let i = 1; i <= totalPages; i++) {
-        const pageButton = document.createElement("button");
-        pageButton.textContent = i;
-        pageButton.onclick = () => {
-            currentPage = i;
-            renderPage(currentPage);
+
+
+    if (currentPage !=1){
+        // Botão de página anterior
+        const prevButton = document.createElement("button");
+        prevButton.innerHTML = '<i class="fas fa-chevron-left"></i>'; // Ícone de flecha para a esquerda
+        prevButton.disabled = currentPage === 1; // Desabilita se for a primeira página
+        prevButton.onclick = () => {
+            if (currentPage > 1) {
+                currentPage--;
+                renderPage(currentPage);
+                renderPagination();
+            }
         };
-        paginationContainer.appendChild(pageButton);
+        paginationContainer.appendChild(prevButton);
+        // Botão da última página
+        const lastButton = document.createElement("button");
+        lastButton.textContent = 1; // Última página
+        lastButton.onclick = () => {
+            currentPage = 1;
+            renderPage(currentPage);
+            renderPagination();
+        };
+        paginationContainer.appendChild(lastButton);
     }
+
+    // Botão da página atual
+    const currentPageButton = document.createElement("button");
+    currentPageButton.textContent = currentPage; // Exibe o número da página atual
+    currentPageButton.disabled = true; // Desabilita o botão
+    currentPageButton.className = 'current-page-button'; // Adiciona a classe para estilização
+    paginationContainer.appendChild(currentPageButton);
+
+
+    if (currentPage !=totalPages){
+        // Botão da última página
+        const lastButton = document.createElement("button");
+        lastButton.textContent = totalPages; // Última página
+        lastButton.onclick = () => {
+            currentPage = totalPages;
+            renderPage(currentPage);
+            renderPagination();
+        };
+        paginationContainer.appendChild(lastButton);
+        // Botão de próxima página
+        const nextButton = document.createElement("button");
+        nextButton.innerHTML = '<i class="fas fa-chevron-right"></i>'; // Ícone de flecha para a direita
+        nextButton.disabled = currentPage === totalPages; // Desabilita se for a última página
+        nextButton.onclick = () => {
+            if (currentPage < totalPages) {
+                currentPage++;
+                renderPage(currentPage);
+                renderPagination();
+            }
+        };
+        paginationContainer.appendChild(nextButton);
+    }
+
 }
 
 function adicionarCarrinho(ind) {
@@ -163,13 +250,10 @@ function adicionarCarrinho(ind) {
     }, 2000); // Duração da exibição da mensagem
 }
 
-function enviarCarrinho(userName, userAddress) {
-    if (carrinho.length === 0) {
-        alert("Seu carrinho está vazio!");
-        return;
-    }
+function enviarCarrinho(user) {
 
-    let mensagem = `Olá ${userName}! Gostaria de comprar:\n\n`;
+
+    let mensagem = `Olá, sou ${user.nome}!\n  Gostaria de comprar:\n\n`;
     let total = 0;
 
     carrinho.forEach(item => {
@@ -178,7 +262,14 @@ function enviarCarrinho(userName, userAddress) {
         total += itemTotal; // Update total
     });
 
-    mensagem += `\nTotal do Pedido: R$ ${total.toFixed(2)}\nEndereço: ${userAddress}`; // Add total and address to message
+    mensagem += `\nTotal do Pedido: R$ ${total.toFixed(2)}\n`; // Add total and address to message
+    mensagem += `Endereço \n`;
+    mensagem += `UF: ${user.UF}\n`;
+    mensagem += `Cidade: ${user.Cidade}\n`;
+    mensagem += `Bairro: ${user.Bairro}\n`;
+    mensagem += `Rua: ${user.Rua}\n`;
+    mensagem += `Número: ${user.Nr}\n`;
+    mensagem += `Complemento: ${user.Comp}\n`;
 
     const urlWhats = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensagem)}`;
     window.open(urlWhats, '_blank');
@@ -258,6 +349,15 @@ function mostrarCarrinho() {
 function fecharCarrinho() {
     const cartMenu = document.getElementById("cartMenu");
     cartMenu.style.right = '-300px'; // Hide the cart menu
+}
+function mostraFiltro() {
+    const cartMenu = document.getElementById("filtosList");
+    if (isfiltro){
+        cartMenu.style.left = '-300px'; // show the cart menu
+    }else{
+        cartMenu.style.left = '0'; // Hide the cart menu
+    }
+    isfiltro=!isfiltro
 }
 
 function removerDoCarrinho(index) {
@@ -370,25 +470,38 @@ function toggleFilterMenu() {
     filterMenu.classList.toggle("hidden");
 }
 function finalizarPedido(){
-
+    if (carrinho.length === 0) {
+        alert("Seu carrinho está vazio!");
+        return;
+    }
     document.getElementById("orderModal").style.display = "block"; // Show the modal
 
 }
-function submitOrder() {
-    const userName = document.getElementById("userName").value;
-    const userAddress = document.getElementById("userAddress").value;
-
-    if (!userName || !userAddress) {
-        alert("Por favor, preencha todos os campos.");
-        return;
+function submitOrder(event) {
+    if (event) {
+        event.preventDefault();
+    }
+    let user ={
+        nome: document.getElementById("userName").value,
+        UF:document.getElementById("userUF").value,
+        Cidade:document.getElementById("userCity").value,
+        Bairro:document.getElementById("userNeighborhood").value,
+        Rua:document.getElementById("userStreet").value,
+        Nr:document.getElementById("userNumber").value,
+        Comp:document.getElementById("userComplement").value,
     }
 
+
     // You can pass userName and userAddress to enviarCarrinho if needed
-    enviarCarrinho(userName, userAddress); // Modify enviarCarrinho to accept these parameters
+    enviarCarrinho(user); // Modify enviarCarrinho to accept these parameters
     fecharModal(); // Close the modal
 }
 
 function fecharModal() {
     document.getElementById("orderModal").style.display = "none"; // Hide the modal
 }
-// ajustar mensagem no whats e implementar para ao iniciar verificar se os produtos do carrinho ainda existem e limpar carrinho caso a mensagem já tenha sido enviada
+
+function toggleView(vlr) {
+    isCardView = vlr; // Alterna entre true e false
+    renderPage(currentPage); // Re-renderiza a página atual
+}
