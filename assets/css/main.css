@@ -48,6 +48,11 @@ body {
     width: 300px; 
 }
 
+.titulo-card {
+    font-size: large;
+    font-weight: bolder;
+    height: 85px;
+}
 /* Media query para dispositivos móveis (resoluções menores que 720px) */
 @media (max-width: 720px) {
     .produtos {
@@ -131,7 +136,7 @@ body {
     -webkit-box-orient: vertical; /* Set the box orientation to vertical */
     -webkit-line-clamp: 2; /* Limit to 2 lines */
     line-height: 1.2em; /* Set line height */
-    max-height: 2.4em; /* Set max height to 2 lines */
+    height: 2.4em; /* Set max height to 2 lines */
 }
 .cart-menu {
     position: fixed;
