@@ -29,44 +29,44 @@ function atualizarContador() {
 }
 
 async function carregarProdutos() {
-    const correctPassword = 'pttViado'; 
+    // const correctPassword = 'pttViado'; 
 
-    let tentativas = 0;
-    let erroDemais = false;
-    // Show password prompt using SweetAlert2
-    let result = await Swal.fire({
-        title: 'Digite a Senha para acessar o site',
-        input: 'password',
-        inputAttributes: {
-            autocapitalize: 'off'
-        },
-        showCancelButton: false,
-        confirmButtonText: 'Entrar',
-        showLoaderOnConfirm: true,
-        preConfirm: (password) => {
-            if (password !== correctPassword) {
-                if (tentativas > 10){
-                    erroDemais= true;
-                    return true;
-                }
-                Swal.showValidationMessage('Senha incorreta!');
-                tentativas++
-                return false;
-            }
-            return true;
-        },
-        allowOutsideClick: () => !Swal.isLoading()
-    })
-    if (!result.isConfirmed || erroDemais) {
-        document.body.innerHTML = `
-        <div style="display: flex; justify-content: center; align-items: center; height: 100vh;">
-            <img src="https://media.tenor.com/6t9GqNTLAR4AAAAj/ilisinka.gif" alt="Access Denied" style="max-width: 100%; height: auto;">
-            <img src="https://media1.tenor.com/m/InzuVTz0zM8AAAAd/tralalelo-tralala-bombardiro-crocodilo.gif" alt="Access Denied" style="max-width: 100%; height: auto;">
-        </div>
-    `;
-        return;
-    }
-    console.log(result)
+    // let tentativas = 0;
+    // let erroDemais = false;
+    // // Show password prompt using SweetAlert2
+    // let result = await Swal.fire({
+    //     title: 'Digite a Senha para acessar o site',
+    //     input: 'password',
+    //     inputAttributes: {
+    //         autocapitalize: 'off'
+    //     },
+    //     showCancelButton: false,
+    //     confirmButtonText: 'Entrar',
+    //     showLoaderOnConfirm: true,
+    //     preConfirm: (password) => {
+    //         if (password !== correctPassword) {
+    //             if (tentativas > 10){
+    //                 erroDemais= true;
+    //                 return true;
+    //             }
+    //             Swal.showValidationMessage('Senha incorreta!');
+    //             tentativas++
+    //             return false;
+    //         }
+    //         return true;
+    //     },
+    //     allowOutsideClick: () => !Swal.isLoading()
+    // })
+    // if (!result.isConfirmed || erroDemais) {
+    //     document.body.innerHTML = `
+    //     <div style="display: flex; justify-content: center; align-items: center; height: 100vh;">
+    //         <img src="https://media.tenor.com/6t9GqNTLAR4AAAAj/ilisinka.gif" alt="Access Denied" style="max-width: 100%; height: auto;">
+    //         <img src="https://media1.tenor.com/m/InzuVTz0zM8AAAAd/tralalelo-tralala-bombardiro-crocodilo.gif" alt="Access Denied" style="max-width: 100%; height: auto;">
+    //     </div>
+    // `;
+    //     return;
+    // }
+
     document.getElementById("loadingMessage").style.display = "flex";
 
     fetch(url)
