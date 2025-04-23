@@ -10,14 +10,14 @@ function renderPage(page) {
         tableBody.innerHTML += `
             <tr class="texto-tabela">
                 <td>${produto.imagem !="assets/img/semfoto.jpeg" ? `<button style="border-radius: 10px;" onclick="montadetalhes(${produto.id})"><i class="fas fa-camera"></i></button>`: ""}</td>
-                <td>${produto.nome}</td>
-                <td>R$ ${formataNumeros(produto.preco)}</td>
+                <td style="white-space: nowrap;">${produto.nome}</td>
+                <td style="font-weight: bolder;background:#fff1ce;white-space: nowrap;">R$ ${formataNumeros(produto.preco)}</td>
                 <td>
-                    <button onclick="alterarQuantidade(${produto.id}, -1)" style="color: red; border-radius: 50%; width: 15px; height: 15px; border: none; padding:0; background:none;">
+                    <button onclick="alterarQuantidade(${produto.id}, -1)" style="color: red; border-radius: 50%; width: 10px; height: 10px; border: none; padding:0; background:none;">
                         <i class="fas fa-minus"></i>
                     </button>
                     <input class="input-qtde" id="quantidade-${produto.id}" name="quantidade-${produto.id}" type="number" value="0" max="99" min="0"  />
-                    <button onclick="alterarQuantidade(${produto.id}, 1)" style="color: green; border-radius: 50%; width: 15px; height: 15px; border: none;padding:0; background:none">
+                    <button onclick="alterarQuantidade(${produto.id}, 1)" style="color: green; border-radius: 50%; width: 10px; height: 10px; border: none;padding:0; background:none">
                         <i class="fas fa-plus"></i>
                     </button>
                     <button class="botao-small" onclick='adicionarCarrinho(${produto.id})'>
