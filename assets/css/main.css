@@ -53,6 +53,12 @@ body {
     font-weight: bolder;
     height: 85px;
 }
+.texto-tabela {
+    font-size:medium;
+}
+.input-qtde {
+    width: 50px; text-align: center;
+}
 /* Media query para dispositivos móveis (resoluções menores que 720px) */
 @media (max-width: 720px) {
     .produtos {
@@ -66,7 +72,12 @@ body {
         width:170px !important;
         height:170px !important;
     }
-
+    .texto-tabela {
+        font-size:x-small;
+    }
+    .input-qtde {
+        width: 25px; text-align: center;
+    }
 }
 
 .produto h3 {
@@ -85,6 +96,18 @@ body {
 }
 
 .botao:hover {
+    background: #a30000;
+}
+.botao-small {
+    background: #8B0000;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    margin: 0;
+}
+
+.botao-small:hover {
     background: #a30000;
 }
 

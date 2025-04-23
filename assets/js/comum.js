@@ -8,11 +8,10 @@ var maiorValor = 0;
 let carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
 const itemsPerPage = 20; // Number of items per page
 let currentPage = 1; // Current page number
-let isCardView = true;
 let isfiltro = false;
 let totalCarrinho=0;
 
-// Função para inicializar quando o documento estiver pronto
+
 $(document).ready(function() {
     // Carrega o carrinho do localStorage se existir
     const carrinhoSalvo = localStorage.getItem('carrinho');
@@ -20,6 +19,7 @@ $(document).ready(function() {
         carrinho = JSON.parse(carrinhoSalvo);
         atualizarContador();
     }
+  //  isCardView =  !document.getElementById("produtosTabela");
     // Carrega os produtos
     carregarProdutos();
 });
@@ -100,88 +100,6 @@ async function carregarProdutos() {
         })
 }
 
-function renderPage(page) {
-    const container = document.getElementById("produtos");
-    const table = document.getElementById("produtosTabela");
-    const tableBody = document.getElementById("produtosTabelaBody");
-    container.innerHTML = '';
-    tableBody.innerHTML = '';
-
-    const startIndex = (page - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    const paginatedItems = VinhosFiltados.slice(startIndex, endIndex);
-
-    if (isCardView) {
-        container.style.display = 'grid';
-        table.style.display = 'none';
-        paginatedItems.forEach((produto) => {
-            container.innerHTML += `
-            <div class="produto">
-                <h3 class="titulo-card">${produto.nome}</h3>
-                <img src="${produto.imagem}" alt="${produto.nome}" class="imagensCard" onclick="montadetalhes(${produto.id})"/>
-                <p class="descricao">${(produto.descricao)}</p>
-                <p><strong>Valor unitário: R$ ${formataNumeros(produto.preco)}</strong></p>
-                <div>
-                    <label for="quantidade-${produto.id}">Quantidade: </label>
-                    <button onclick="alterarQuantidade(${produto.id}, -1)" style="color: red; border-radius: 50%; width: 30px; height: 30px; border: none;">
-                        <i class="fas fa-minus"></i>
-                    </button>
-                    <input id="quantidade-${produto.id}" name="quantidade-${produto.id}" type="number" value="0" max="99" min="0" style="width: 50px; text-align: center;" />
-                    <button onclick="alterarQuantidade(${produto.id}, 1)" style="color: green; border-radius: 50%; width: 30px; height: 30px; border: none;">
-                        <i class="fas fa-plus"></i>
-                    </button>
-                </div>
-                <button class="botao" onclick='adicionarCarrinho(${produto.id})'>
-                    <div id="adicionar-${produto.id}">
-                        Adicionar ao carrinho
-                    </div>
-                    <span class="check-message" id="adicionado-${produto.id}" style="display: none;">
-                        <i class="fas fa-check"></i> Adicionado!
-                    </span>
-                </button>
-            </div>
-            `;
-        });
-    } else {
-        container.style.display = 'none';
-        table.style.display = 'table';
-        paginatedItems.forEach((produto) => {
-            tableBody.innerHTML += `
-                <tr>
-                    <td>${produto.nome}</td>
-                    <td>${produto.descricao}</td>
-                    <td>R$ ${formataNumeros(produto.preco)}</td>
-                    <td>
-                        <input id="quantidade-${produto.id}" name="quantidade-${produto.id}" type="number" value="0" max="99" min="0" style="width: 50px; text-align: center;" />
-                    </td>
-                    <td>
-                        <button onclick="alterarQuantidade(${produto.id}, -1)" style="color: red; border-radius: 50%; width: 30px; height: 30px; border: none;">
-                            <i class="fas fa-minus"></i>
-                        </button>
-                        <button onclick="alterarQuantidade(${produto.id}, 1)" style="color: green; border-radius: 50%; width: 30px; height: 30px; border: none;">
-                            <i class="fas fa-plus"></i>
-                        </button>
-                        <button class="botao" onclick='adicionarCarrinho(${produto.id})'>
-                            <div id="adicionar-${produto.id}">
-                                Adicionar ao carrinho
-                            </div>
-                            <span class="check-message" id="adicionado-${produto.id}" style="display: none;">
-                                <i class="fas fa-check"></i> Adicionado!
-                            </span>
-                        </button>
-                    </td>
-                     <td>${produto.imagem !="assets/img/semfoto.jpeg" ? `<button style="border-radius: 10px;" onclick="montadetalhes(${produto.id})"><i class="fas fa-camera"></i></button>`: ""}</td>
-                </tr>
-            `;
-        });
-    }
-
-    if (VinhosFiltados.length === 0) {
-        container.innerHTML = '<p>Nenhum produto encontrado.</p>'; // Display message if no products found
-        table.style.display = 'none';
-    }
-    renderPagination();
-}
 
 function alterarQuantidade(produtoId, delta) {
     const input = document.getElementById(`quantidade-${produtoId}`);
