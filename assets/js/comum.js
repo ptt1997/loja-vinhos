@@ -10,6 +10,7 @@ const itemsPerPage = 20; // Number of items per page
 let currentPage = 1; // Current page number
 let isfiltro = false;
 let totalCarrinho=0;
+let totalGarrafas=0;
 
 
 $(document).ready(function() {
@@ -212,7 +213,7 @@ function enviarCarrinho(user) {
 
     let mensagem = `Olá, sou ${user.nome}!\n  Gostaria de comprar:\n\n`;
     let total = 0;
-
+    let totalGarrafas = 0;
     carrinho.forEach(item => {
         const itemTotal = item.preco * item.quantidade; // Calculate total for each item
         mensagem += `${item.nome} - ${item.quantidade} - R$ ${itemTotal.toFixed(2)}\n`; // Format message
@@ -220,13 +221,10 @@ function enviarCarrinho(user) {
     });
 
     mensagem += `\nTotal do Pedido: R$ ${total.toFixed(2)}\n`; // Add total and address to message
-    mensagem += `Endereço \n`;
-    mensagem += `UF: ${user.UF}\n`;
-    mensagem += `Cidade: ${user.Cidade}\n`;
-    mensagem += `Bairro: ${user.Bairro}\n`;
-    mensagem += `Rua: ${user.Rua}\n`;
-    mensagem += `Número: ${user.Nr}\n`;
-    mensagem += `Complemento: ${user.Comp}\n`;
+    mensagem += `\nTotal do Garrafas: ${totalGarrafas.toFixed(0)}\n`; // Add total and address to message
+    mensagem += `Telfone: ${user.Tel}\n`;
+    mensagem += `Obs: ${user.Obs}\n`;
+
 
     const urlWhats = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensagem)}`;
     window.open(urlWhats, '_blank');
@@ -274,7 +272,7 @@ function alterarQuantidadeCarrinho(produtoId,index, delta) {
             produto.quantidade = 0;
         } 
         if (produto.quantidade > 99) produto.quantidade = 99;
-
+        carrinho[index]=produto
         // Update the cart in localStorage
         localStorage.setItem('carrinho', JSON.stringify(carrinho));
 
@@ -284,48 +282,99 @@ function alterarQuantidadeCarrinho(produtoId,index, delta) {
         const qtdeTotaIn = document.getElementById("carrinhototalitem-"+produtoId);
         qtdeTotaIn.innerHTML ="Valor: R$ "+formataNumeros(produto.preco * produto.quantidade);
         const totalValueElement = document.getElementById("totalValue");
+        const totalGarrafasElement = document.getElementById("totalValueGar");
         totalCarrinho+= delta*(produto.preco);
+        totalGarrafas+=delta;
         totalValueElement.textContent = formataNumeros(totalCarrinho);
+        totalGarrafasElement.textContent = totalGarrafas
     }
+}
+function alteraQtdeCar(produtoId,index){
+    setTimeout(() => {
+    const qtdeNova = Number(document.getElementById("quantidadecar-"+produtoId).value);
+    const produto = carrinho.find(item => item.id === produtoId);
+    if (produto) {
+        let delta = qtdeNova-produto.quantidade;
+        // Update the quantity
+        console.log(qtdeNova);
+        produto.quantidade = qtdeNova;
+        console.log(produto.quantidade);
+        // Ensure quantity stays within bounds
+        if (produto.quantidade <= 0){
+            removerDoCarrinho(index);
+            produto.quantidade = 0;
+            return;
+        } 
+        if (produto.quantidade > 99) produto.quantidade = 99;
+
+        carrinho[index]=produto
+        // Update the cart in localStorage
+        localStorage.setItem('carrinho', JSON.stringify(carrinho));
+
+        // Refresh the cart display
+        console.log(produtoId)
+        const qtdeTotaIn = document.getElementById("carrinhototalitem-"+produtoId.toString());
+        console.log(produto.quantidade)
+        qtdeTotaIn.innerHTML ="R$ "+formataNumeros(produto.preco * produto.quantidade);
+        const totalValueElement = document.getElementById("totalValue");
+        const totalGarrafasElement = document.getElementById("totalValueGar");
+        totalCarrinho+= delta*(produto.preco);
+        totalGarrafas+=delta;
+        totalValueElement.textContent = formataNumeros(totalCarrinho);
+        totalGarrafasElement.textContent = totalGarrafas
+    }
+}, 100); // espera 100ms
 }
 function mostrarCarrinho() {
     const cartMenu = document.getElementById("cartMenu");
     const cartItemsContainer = document.getElementById("cartItems");
     const totalValueElement = document.getElementById("totalValue");
+    const totalGarrafasElement = document.getElementById("totalValueGar");
 
     // Clear previous items
     cartItemsContainer.innerHTML = '';
     totalCarrinho = 0;
+    totalGarrafas = 0;
 
-    // Loop through the cart and create HTML for each item
     carrinho.forEach((item, index) => {
         const itemTotal = item.preco * item.quantidade;
         totalCarrinho += itemTotal;
+        totalGarrafas += item.quantidade;
 
-        cartItemsContainer.innerHTML += `
-            <div class="cart-item">
-                <img src="${item.imagem}" alt="${item.nome}" />
-                <div>
-                    <strong>${item.nome}</strong><br>
-                    <span id="carrinhoqtd-${item.id}">Quantidade: ${item.quantidade}</span>
-                    <button onclick="alterarQuantidadeCarrinho(${item.id},${index}, -1)" style="color: red; border-radius: 50%; width: 20px; height: 20px; border: none;">
-                        <i class="fas fa-minus"></i>
-                    </button>
-                    <button onclick="alterarQuantidadeCarrinho(${item.id},${index}, 1)" style="color: green; border-radius: 50%; width: 20px; height: 20px; border: none;">
-                        <i class="fas fa-plus"></i>
-                    </button>
-                    <br>
-                   <span id="carrinhototalitem-${item.id}"> Valor: R$ ${formataNumeros(itemTotal)}</span>
-                </div>
-                <button onclick="removerDoCarrinho(${index})">
-                    <i class="fas fa-trash"></i>
-                </button>
-            </div>
-        `;
     });
+    cartItemsContainer.innerHTML = `
+    <table class="cart-items-table">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Qtde</th>
+                <th>Valor</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            ${carrinho.map((item, index) =>                 
+                `
+                <tr class="texto-tabela-car">
+                    <td  style="white-space: nowrap;text-align:start;"><strong>${item.nome}</strong></td>
+                    <td >
+                       <input onblur="alteraQtdeCar(${item.id},${index})" class="input-qtde" id="quantidadecar-${item.id}" name="quantidade-${item.id}" type="number" value="${item.quantidade}" max="99" min="0"  />
+                    </td>
+                    <td  style="white-space: nowrap;text-align:start;font-weight: bolder;" id="carrinhototalitem-${item.id}">R$ ${formataNumeros(item.preco * item.quantidade)}<div  id="carrinhototalitem-${item.id}"></div></td>
+                    <td style="font-size:15px">
+                        <button style="border:none;color:red;background:none;" onclick="removerDoCarrinho(${index})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('')}
+        </tbody>
+    </table>
+`;
 
     // Update total value
     totalValueElement.textContent = formataNumeros(totalCarrinho);
+    totalGarrafasElement.textContent = totalGarrafas
 
     // Show the cart menu
     cartMenu.style.right = '0';
@@ -339,7 +388,7 @@ function mostrarCarrinho() {
 
 function fecharCarrinho() {
     const cartMenu = document.getElementById("cartMenu");
-    cartMenu.style.right = '-300px'; // Hide the cart menu
+    cartMenu.style.right = '-350px'; // Hide the cart menu
 }
 function mostraFiltro() {
     const cartMenu = document.getElementById("filtosList");
@@ -475,12 +524,8 @@ function submitOrder(event) {
     }
     let user ={
         nome: document.getElementById("userName").value,
-        UF:document.getElementById("userUF").value,
-        Cidade:document.getElementById("userCity").value,
-        Bairro:document.getElementById("userNeighborhood").value,
-        Rua:document.getElementById("userStreet").value,
-        Nr:document.getElementById("userNumber").value,
-        Comp:document.getElementById("userComplement").value,
+        Tel:document.getElementById("userTel").value,
+        Obs:document.getElementById("userObs").value,
     }
 
 

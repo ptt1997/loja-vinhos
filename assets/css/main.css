@@ -56,6 +56,9 @@ body {
 .texto-tabela {
     font-size:medium;
 }
+.texto-tabela-car {
+    font-size:medium;
+}
 .input-qtde {
     width: 50px; text-align: center;
 }
@@ -74,6 +77,9 @@ body {
     }
     .texto-tabela {
         font-size:8px;
+    }
+    .texto-tabela-car {
+        font-size:10px;
     }
     .input-qtde {
         width: 25px; text-align: center;
@@ -164,8 +170,8 @@ body {
 .cart-menu {
     position: fixed;
     top: 0;
-    right: -300px; /* Initially hidden */
-    width: 300px;
+    right: -350px; /* Initially hidden */
+    width: 350px;
     height: 100%;
     background: whitesmoke;
     box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
@@ -183,6 +189,9 @@ body {
 
 .cart-items {
     margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    font-size: 14px;
 }
 
 .cart-item {
@@ -208,6 +217,7 @@ body {
 .cart-total {
     margin-top: 20px;
     font-size: 1.2em;
+    text-align: end;
 }
 .filter-toggle {
     cursor: pointer;
@@ -373,4 +383,29 @@ body {
     width:270px; 
     height:270px; 
     cursor: pointer;
+}
+.cart-items-table {
+    width: 100%;
+    border-collapse: collapse;
+    overflow-x: auto; /* Enable horizontal scrolling */
+    display: block; /* Make the table scrollable */
+}
+
+.cart-items-table th, .cart-items-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+
+.cart-items-table th {
+    background-color: #f2f2f2;
+    color: black;
+}
+
+.cart-items-table tr:nth-child(even) {
+    background-color: #f2f2f2; /* Light gray for even rows */
+}
+
+.cart-items-table tr:nth-child(odd) {
+    background-color: #ffffff; /* White for odd rows */
 }

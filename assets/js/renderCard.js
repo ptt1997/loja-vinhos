@@ -22,7 +22,7 @@ function renderPage(page) {
                 <button onclick="alterarQuantidade(${produto.id}, -1)" style="color: red; border-radius: 50%; width: 30px; height: 30px; border: none;">
                     <i class="fas fa-minus"></i>
                 </button>
-                <input id="quantidade-${produto.id}" name="quantidade-${produto.id}" type="number" value="0" max="99" min="0" style="width: 50px; text-align: center;" />
+                <input id="quantidade-${produto.id}" name="quantidade-${produto.id}" type="number" value="" max="99" min="0" style="width: 50px; text-align: center;" />
                 <button onclick="alterarQuantidade(${produto.id}, 1)" style="color: green; border-radius: 50%; width: 30px; height: 30px; border: none;">
                     <i class="fas fa-plus"></i>
                 </button>
