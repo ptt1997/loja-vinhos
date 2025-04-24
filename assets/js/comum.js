@@ -218,6 +218,7 @@ function enviarCarrinho(user) {
         const itemTotal = item.preco * item.quantidade; // Calculate total for each item
         mensagem += `${item.nome} - ${item.quantidade} - R$ ${itemTotal.toFixed(2)}\n`; // Format message
         total += itemTotal; // Update total
+        totalGarrafas += item.quantidade; // Update total
     });
 
     mensagem += `\nTotal do Pedido: R$ ${total.toFixed(2)}\n`; // Add total and address to message
