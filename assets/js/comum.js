@@ -306,7 +306,6 @@ function alteraQtdeCar(produtoId,index){
             produto.quantidade = 0;
             return;
         } 
-        if (produto.quantidade > 99) produto.quantidade = 99;
 
         carrinho[index]=produto
         // Update the cart in localStorage
@@ -360,7 +359,7 @@ function mostrarCarrinho() {
                 <tr class="texto-tabela-car">
                     <td  style="white-space: nowrap;text-align:start;"><strong>${item.nome}</strong></td>
                     <td >
-                       <input onblur="alteraQtdeCar(${item.id},${index})" class="input-qtde" id="quantidadecar-${item.id}" name="quantidade-${item.id}" type="number" value="${item.quantidade}" max="99" min="0"  />
+                       <input onblur="alteraQtdeCar(${item.id},${index})" class="input-qtde" id="quantidadecar-${item.id}" name="quantidade-${item.id}" type="number" value="${item.quantidade}" max="99"  maxlength="2" min="0"  />
                     </td>
                     <td  style="white-space: nowrap;text-align:start;font-weight: bolder;" id="valorunitario-${item.id}">R$ ${formataNumeros(item.preco)}</td>
                     <td  style="white-space: nowrap;text-align:start;font-weight: bolder;" id="carrinhototalitem-${item.id}">R$ ${formataNumeros(item.preco * item.quantidade)}<div  id="carrinhototalitem-${item.id}"></div></td>
