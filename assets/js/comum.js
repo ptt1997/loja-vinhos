@@ -349,6 +349,7 @@ function mostrarCarrinho() {
             <tr>
                 <th>Nome</th>
                 <th>Qtde</th>
+                <th style="white-space: nowrap;text-align:start;">Valor Un.</th>
                 <th>Valor</th>
                 <th>Ações</th>
             </tr>
@@ -361,6 +362,7 @@ function mostrarCarrinho() {
                     <td >
                        <input onblur="alteraQtdeCar(${item.id},${index})" class="input-qtde" id="quantidadecar-${item.id}" name="quantidade-${item.id}" type="number" value="${item.quantidade}" max="99" min="0"  />
                     </td>
+                    <td  style="white-space: nowrap;text-align:start;font-weight: bolder;" id="valorunitario-${item.id}">R$ ${formataNumeros(item.preco)}</td>
                     <td  style="white-space: nowrap;text-align:start;font-weight: bolder;" id="carrinhototalitem-${item.id}">R$ ${formataNumeros(item.preco * item.quantidade)}<div  id="carrinhototalitem-${item.id}"></div></td>
                     <td style="font-size:15px">
                         <button style="border:none;color:red;background:none;" onclick="removerDoCarrinho(${index})">
