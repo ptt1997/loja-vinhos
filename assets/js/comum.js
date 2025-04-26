@@ -389,7 +389,7 @@ function mostrarCarrinho() {
 
 function fecharCarrinho() {
     const cartMenu = document.getElementById("cartMenu");
-    cartMenu.style.right = '-350px'; // Hide the cart menu
+    cartMenu.style.right = '-450px'; // Hide the cart menu
 }
 function mostraFiltro() {
     const cartMenu = document.getElementById("filtosList");

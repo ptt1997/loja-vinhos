@@ -170,8 +170,9 @@ body {
 .cart-menu {
     position: fixed;
     top: 0;
-    right: -350px; /* Initially hidden */
-    width: 350px;
+    right: -450px; /* Initially hidden */
+    width: 100%; /* Set width to 100% */
+    max-width: 450px; /* Maximum width of 450px */
     height: 100%;
     background: whitesmoke;
     box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
