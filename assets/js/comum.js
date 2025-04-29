@@ -18,6 +18,9 @@ $(document).ready(function() {
     const carrinhoSalvo = localStorage.getItem('carrinho');
     if (carrinhoSalvo) {
         carrinho = JSON.parse(carrinhoSalvo);
+        carrinho.forEach(item => {
+            totalGarrafas += item.quantidade; // Update total
+        });
         atualizarContador();
     }
   //  isCardView =  !document.getElementById("produtosTabela");
@@ -26,7 +29,7 @@ $(document).ready(function() {
 });
 
 function atualizarContador() {
-    document.getElementById('carrinhoContador').textContent = carrinho.length;
+    document.getElementById('carrinhoContador').textContent = totalGarrafas;
 }
 
 async function carregarProdutos() {
@@ -82,6 +85,7 @@ async function carregarProdutos() {
                 imagem: produto["Link Imagem"] && produto["Link Imagem"].trim() !== '' ? produto["Link Imagem"] : 'assets/img/semfoto.jpeg',
                 preco: produto.Preço || 0 // Use 0 if not available
             }));
+            console.log(Vinhos);
             VinhosFiltados=Vinhos;
             renderPage(currentPage);
             carregaFiltros();
@@ -109,7 +113,6 @@ function alterarQuantidade(produtoId, delta) {
 
     // Ensure quantity stays within bounds
     if (quantidade < 0) quantidade = 0;
-    if (quantidade > 99) quantidade = 99;
 
     input.value = quantidade; // Update the input field
 }
@@ -180,10 +183,11 @@ function renderPagination() {
 
 }
 
-function adicionarCarrinho(ind) {
+function adicionarCarrinho(ind,blur = false) {
     let produto = Vinhos[ind];
     produto.quantidade = Number($("#quantidade-" + ind).val());
-    if (!produto.quantidade || produto.quantidade <= 0) {
+    if (blur &&  produto.quantidade <= 0) return
+    if ((!produto.quantidade || produto.quantidade <= 0)) {
         Swal.fire({
             icon: "error",
             title: "Oops...",
@@ -272,7 +276,6 @@ function alterarQuantidadeCarrinho(produtoId,index, delta) {
             removerDoCarrinho(index);
             produto.quantidade = 0;
         } 
-        if (produto.quantidade > 99) produto.quantidade = 99;
         carrinho[index]=produto
         // Update the cart in localStorage
         localStorage.setItem('carrinho', JSON.stringify(carrinho));
@@ -340,7 +343,6 @@ function mostrarCarrinho() {
         const itemTotal = item.preco * item.quantidade;
         totalCarrinho += itemTotal;
         totalGarrafas += item.quantidade;
-
     });
     cartItemsContainer.innerHTML = `
     <table class="cart-items-table">
@@ -378,19 +380,13 @@ function mostrarCarrinho() {
     totalValueElement.textContent = formataNumeros(totalCarrinho);
     totalGarrafasElement.textContent = totalGarrafas
 
-    // Show the cart menu
-    cartMenu.style.right = '0';
-    document.addEventListener('click', function closeCartMenu(event) {
-        if (!cartMenu.contains(event.target) && !document.querySelector('.carrinho-contador').contains(event.target)) {
-            fecharCarrinho();
-            document.removeEventListener('click', closeCartMenu); // Remove the event listener after closing
-        }
-    });
+    // Show the cart modal
+    cartMenu.classList.add('show');
 }
 
 function fecharCarrinho() {
     const cartMenu = document.getElementById("cartMenu");
-    cartMenu.style.right = '-450px'; // Hide the cart menu
+    cartMenu.classList.remove('show'); // Hide the cart modal
 }
 function mostraFiltro() {
     const cartMenu = document.getElementById("filtosList");

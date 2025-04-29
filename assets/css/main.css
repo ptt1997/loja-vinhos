@@ -13,16 +13,18 @@ body {
     right: 0;
     background: #8B0000;
     color: white;
-    padding: 15px 20px;
+    padding: 10px 15px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     z-index: 1000;
     display: flex;
     place-content: space-between;
+    align-items: center;
 }
 
 .header h1 {
     margin: 0;
-    font-size: 1.8rem;
+    font-size: larger;
+    font-weight: bolder;
 }
 
 .produtos {
@@ -130,7 +132,7 @@ body {
 }
 
 .carrinho-contador {
-    background: #580101;
+    background: #066900;
     color: white;
     border-radius: 50%;
     width: 40px;
@@ -168,11 +170,9 @@ body {
     height: 2.4em; /* Set max height to 2 lines */
 }
 .cart-menu {
-    position: fixed;
     top: 0;
-    right: -450px; /* Initially hidden */
     width: 100%; /* Set width to 100% */
-    max-width: 450px; /* Maximum width of 450px */
+    max-width: 750px; /* Maximum width of 450px */
     height: 100%;
     background: whitesmoke;
     box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
@@ -186,6 +186,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    width: 100%;
 }
 
 .cart-items {
@@ -193,6 +194,8 @@ body {
     display: flex;
     flex-direction: column;
     font-size: 14px;
+    overflow-x: auto;
+    width: 100%;
 }
 
 .cart-item {
@@ -219,6 +222,7 @@ body {
     margin-top: 20px;
     font-size: 1.2em;
     text-align: end;
+    width: 100%;
 }
 .filter-toggle {
     cursor: pointer;
@@ -409,4 +413,26 @@ body {
 
 .cart-items-table tr:nth-child(odd) {
     background-color: #ffffff; /* White for odd rows */
+}
+
+#cartMenu.modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: fit-content;
+    max-width: 100%;
+    height: auto;
+    max-height: 80vh;
+    background: whitesmoke;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    padding: 20px;
+    overflow-y: auto;
+    border-radius: 10px;
+}
+
+#cartMenu.modal.show {
+    display: block;
 }
