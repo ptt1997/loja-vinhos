@@ -149,7 +149,16 @@ function renderPagination() {
         };
         paginationContainer.appendChild(lastButton);
     }
-
+    if (currentPage > 2){
+        const lastPageButton = document.createElement("button");
+        lastPageButton.textContent = currentPage-1; // Exibe o número da página atual
+        lastPageButton.onclick = () => {
+            currentPage = currentPage-1;
+            renderPage(currentPage-1);
+            renderPagination();
+        };
+        paginationContainer.appendChild(lastPageButton);
+    }
     // Botão da página atual
     const currentPageButton = document.createElement("button");
     currentPageButton.textContent = currentPage; // Exibe o número da página atual
@@ -157,6 +166,12 @@ function renderPagination() {
     currentPageButton.className = 'current-page-button'; // Adiciona a classe para estilização
     paginationContainer.appendChild(currentPageButton);
 
+    if (currentPage < totalPages-1){
+        const nextPageButton = document.createElement("button");
+        nextPageButton.textContent = "..."; // Exibe o número da página atual
+        nextPageButton.style.cursor="default"
+        paginationContainer.appendChild(nextPageButton);
+    }
 
     if (currentPage !=totalPages){
         // Botão da última página
@@ -189,12 +204,7 @@ function adicionarCarrinho(ind,blur = false) {
     produto.quantidade = Number($("#quantidade-" + ind).val());
     if (blur &&  produto.quantidade <= 0) return
     if ((!produto.quantidade || produto.quantidade <= 0)) {
-        Swal.fire({
-            icon: "error",
-            title: "Oops...",
-            text: "Informe uma quantidade!",
-        });
-        return;
+        produto.quantidade = 1
     }
     const existingProductIndex = carrinho.findIndex(item => item.id === produto.id);
 
@@ -475,17 +485,17 @@ function fecharFiltros() {
     filtra();
 }
 function carregarFiltros() {
-    const marcaCheckboxes = document.getElementById("marcaCheckboxes");
-    marcaCheckboxes.innerHTML = ''; // Clear existing checkboxes
+    // const marcaCheckboxes = document.getElementById("marcaCheckboxes");
+    // marcaCheckboxes.innerHTML = ''; // Clear existing checkboxes
 
-    // Populate the select with unique brands
-    marcas.forEach((marca,i) => {
-        const label = document.createElement("label");
-        label.innerHTML = `
-            <input type="checkbox" id="marcas-${i}" onchange="filtra()"> ${marca}
-        `;
-        marcaCheckboxes.appendChild(label);
-    });
+    // // Populate the select with unique brands
+    // marcas.forEach((marca,i) => {
+    //     const label = document.createElement("label");
+    //     label.innerHTML = `
+    //         <input type="checkbox" id="marcas-${i}" onchange="filtra()"> ${marca}
+    //     `;
+    //     marcaCheckboxes.appendChild(label);
+    // });
 }
 function atualizaSliderMin() {
     const minPriceInput = document.getElementById("minPrice");

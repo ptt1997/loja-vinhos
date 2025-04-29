@@ -22,7 +22,7 @@ function renderPage(page) {
                 <button onclick="alterarQuantidade(${produto.id}, -1)" style="color: red; border-radius: 50%; width: 30px; height: 30px; border: none;">
                     <i class="fas fa-minus"></i>
                 </button>
-                <input id="quantidade-${produto.id}" name="quantidade-${produto.id}" type="number" value="" max="99" min="0" style="width: 50px; text-align: center;" />
+                <input id="quantidade-${produto.id}" name="quantidade-${produto.id}" type="number" value="" max="99" min="0" style="width: 50px; text-align: center;font-size: 18px;" />
                 <button onclick="alterarQuantidade(${produto.id}, 1)" style="color: green; border-radius: 50%; width: 30px; height: 30px; border: none;">
                     <i class="fas fa-plus"></i>
                 </button>
@@ -42,6 +42,9 @@ function renderPage(page) {
     if (VinhosFiltados.length === 0) {
         container.innerHTML = '<p>Nenhum produto encontrado.</p>'; // Display message if no products found
         table.style.display = 'none';
+    }else{
+        const quantidadedv =document.getElementById("quantidade-" + paginatedItems[0].id);
+        quantidadedv?.parentElement?.parentElement?.scrollIntoView({ behavior: 'smooth' });
     }
     renderPagination();
 }
