@@ -286,7 +286,7 @@ body {
 .search-input {
     width: 400px; /* Adjust width for better appearance */
     padding: 10px; /* Padding for better appearance */
-    border: 2px solid #2f0dee; /* Border styling */
+    border: 1px solid #ccc; /* Border styling */
     border-radius: 5px; /* Rounded corners */
     margin: 10px auto; /* Centering */
     display: block; /* Block display for centering */
@@ -326,8 +326,6 @@ body {
     border-radius: 5px; /* Rounded corners */
     cursor: pointer; /* Pointer cursor on hover */
     transition: background-color 0.3s; /* Smooth transition */
-    font-size: 15px;
-    height: 40px;
 }
 
 .pagination button:hover {
@@ -364,8 +362,6 @@ body {
 
 .current-page-button {
     background-color: #570202 !important;
-    font-size: 21px !important;
-    height: 43px !important;
 }
 .produtos-tabela {
     width: 100%;
