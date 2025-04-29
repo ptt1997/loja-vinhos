@@ -18,9 +18,6 @@ $(document).ready(function() {
     const carrinhoSalvo = localStorage.getItem('carrinho');
     if (carrinhoSalvo) {
         carrinho = JSON.parse(carrinhoSalvo);
-        carrinho.forEach(item => {
-            totalGarrafas += item.quantidade; // Update total
-        });
         atualizarContador();
     }
   //  isCardView =  !document.getElementById("produtosTabela");
@@ -29,6 +26,10 @@ $(document).ready(function() {
 });
 
 function atualizarContador() {
+    totalGarrafas = 0;
+    carrinho?.forEach(item => {
+        totalGarrafas += item.quantidade; // Update total
+    });
     document.getElementById('carrinhoContador').textContent = totalGarrafas;
 }
 
@@ -195,7 +196,13 @@ function adicionarCarrinho(ind,blur = false) {
         });
         return;
     }
-    carrinho.push(produto);
+    const existingProductIndex = carrinho.findIndex(item => item.id === produto.id);
+
+    if (existingProductIndex !== -1) {
+        carrinho[existingProductIndex].quantidade += produto.quantidade;
+    } else {
+        carrinho.push(produto);
+    }
     localStorage.setItem('carrinho', JSON.stringify(carrinho));
     atualizarContador();
 
@@ -214,13 +221,14 @@ function adicionarCarrinho(ind,blur = false) {
 
 function enviarCarrinho(user) {
 
+    carrinho.sort((a, b) => a.nome.localeCompare(b.nome));
 
-    let mensagem = `Olá, sou ${user.nome}!\n  Gostaria de comprar:\n\n`;
+    let mensagem = `Olá, sou ${user.nome}!\nGostaria de comprar:\n\n`;
     let total = 0;
     let totalGarrafas = 0;
     carrinho.forEach(item => {
         const itemTotal = item.preco * item.quantidade; // Calculate total for each item
-        mensagem += `${item.nome} - ${item.quantidade} - R$ ${itemTotal.toFixed(2)}\n`; // Format message
+        mensagem += `${item.quantidade} - ${item.nome} - R$ ${itemTotal.toFixed(2)}\n`; // Format message
         total += itemTotal; // Update total
         totalGarrafas += item.quantidade; // Update total
     });
@@ -292,6 +300,7 @@ function alterarQuantidadeCarrinho(produtoId,index, delta) {
         totalValueElement.textContent = formataNumeros(totalCarrinho);
         totalGarrafasElement.textContent = totalGarrafas
     }
+    atualizarContador();
 }
 function alteraQtdeCar(produtoId,index){
     setTimeout(() => {
@@ -324,7 +333,8 @@ function alteraQtdeCar(produtoId,index){
         totalCarrinho+= delta*(produto.preco);
         totalGarrafas+=delta;
         totalValueElement.textContent = formataNumeros(totalCarrinho);
-        totalGarrafasElement.textContent = totalGarrafas
+        totalGarrafasElement.textContent = totalGarrafas;
+        atualizarContador();
     }
 }, 100); // espera 100ms
 }
