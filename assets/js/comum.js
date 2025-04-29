@@ -228,14 +228,14 @@ function enviarCarrinho(user) {
     let totalGarrafas = 0;
     carrinho.forEach(item => {
         const itemTotal = item.preco * item.quantidade; // Calculate total for each item
-        mensagem += `${item.quantidade} - ${item.nome} - R$ ${itemTotal.toFixed(2)}\n`; // Format message
+        mensagem += `${item.quantidade} - ${item.nome}\n`; // Format message
         total += itemTotal; // Update total
         totalGarrafas += item.quantidade; // Update total
     });
 
     mensagem += `\nTotal do Pedido: R$ ${total.toFixed(2)}\n`; // Add total and address to message
-    mensagem += `\nTotal do Garrafas: ${totalGarrafas.toFixed(0)}\n`; // Add total and address to message
-    mensagem += `Telfone: ${user.Tel}\n`;
+    mensagem += `\nTotal de Garrafas: ${totalGarrafas.toFixed(0)}\n`; // Add total and address to message
+    mensagem += `Telefone: ${user.Tel}\n`;
     mensagem += `Obs: ${user.Obs}\n`;
 
 
