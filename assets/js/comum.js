@@ -199,7 +199,7 @@ function adicionarCarrinho(ind,blur = false) {
     const existingProductIndex = carrinho.findIndex(item => item.id === produto.id);
 
     if (existingProductIndex !== -1) {
-        carrinho[existingProductIndex].quantidade += produto.quantidade;
+        carrinho[existingProductIndex].quantidade = produto.quantidade;
     } else {
         carrinho.push(produto);
     }
