@@ -233,8 +233,8 @@ function enviarCarrinho(user) {
         totalGarrafas += item.quantidade; // Update total
     });
 
-    mensagem += `\nTotal do Pedido: R$ ${total.toFixed(2)}\n`; // Add total and address to message
     mensagem += `\nTotal de Garrafas: ${totalGarrafas.toFixed(0)}\n`; // Add total and address to message
+    mensagem += `Total do Pedido: R$ ${total.toFixed(2)}\n\n`; // Add total and address to message
     mensagem += `Telefone: ${user.Tel}\n`;
     mensagem += `Obs: ${user.Obs}\n`;
 

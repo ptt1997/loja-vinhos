@@ -62,7 +62,10 @@ body {
     font-size:medium;
 }
 .input-qtde {
-    width: 50px; text-align: center;
+    width: 50px; 
+    text-align: center;
+    color: blue;
+    font-weight: bolder;
 }
 /* Media query para dispositivos móveis (resoluções menores que 720px) */
 @media (max-width: 720px) {
