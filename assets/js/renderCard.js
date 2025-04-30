@@ -1,7 +1,8 @@
+let add= false;
 function renderPage(page) {
     const container = document.getElementById("produtos");
 
-    container.innerHTML = '';
+   // container.innerHTML = '';
 
     const startIndex = (page - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
@@ -41,9 +42,28 @@ function renderPage(page) {
     if (VinhosFiltados.length === 0) {
         container.innerHTML = '<p>Nenhum produto encontrado.</p>'; // Display message if no products found
         table.style.display = 'none';
-        renderPagination();
+      //  renderPagination();
     } else {
-        renderPagination();
+        //renderPagination();
     }
-    container.scrollTop = 0; // Scroll to the top of the container
+   // container.scrollTop = 0; // Scroll to the top of the container
+   if (!add) criaScrol()
+}
+function criaScrol(){
+    console.log('criaScrol function called'); // Log to verify function call
+    const container = document.getElementById('produtos');
+    // Add an event listener for scrolling on the produtos div
+    container.addEventListener('scroll', () => {
+        console.log(container.scrollHeight);
+        console.log(container.clientHeight);
+        console.log(container.scrollTop);
+        if (container.scrollTop + container.clientHeight >= container.scrollHeight) {
+            // Check if there are more items to load
+            if (currentPage * itemsPerPage < VinhosFiltados.length) {
+                currentPage++;
+                renderPage(currentPage);
+            }
+        }
+    });
+    add = true;
 }

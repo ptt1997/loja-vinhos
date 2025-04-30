@@ -14,13 +14,8 @@ let totalGarrafas=0;
 
 
 $(document).ready(function() {
-    // Carrega o carrinho do localStorage se existir
-    const carrinhoSalvo = localStorage.getItem('carrinho');
-    if (carrinhoSalvo) {
-        carrinho = JSON.parse(carrinhoSalvo);
-        atualizarContador();
-    }
-  //  isCardView =  !document.getElementById("produtosTabela");
+    // Load the cart from localStorage if it exists and is not expired
+    loadCart();
     // Carrega os produtos
     carregarProdutos();
 });
@@ -198,6 +193,30 @@ function renderPagination() {
 
 }
 
+function saveCart() {
+    const cartData = {
+        items: carrinho,
+        timestamp: new Date().getTime()
+    };
+    localStorage.setItem('carrinho', JSON.stringify(cartData));
+    atualizarContador();
+}
+
+function loadCart() {
+    const cartData = JSON.parse(localStorage.getItem('carrinho'));
+    if (cartData) {
+        const currentTime = new Date().getTime();
+        const tenHoursInMilliseconds = 10 * 60 * 60 * 1000;
+        if (currentTime - cartData.timestamp < tenHoursInMilliseconds) {
+            carrinho = cartData.items;
+        } else {
+            localStorage.removeItem('carrinho');
+            carrinho = [];
+        }
+    }
+    atualizarContador();
+}
+
 function adicionarCarrinho(ind,blur = false) {
     let produto = Vinhos[ind];
     produto.quantidade = Number($("#quantidade-" + ind).val());
@@ -212,8 +231,7 @@ function adicionarCarrinho(ind,blur = false) {
     } else {
         carrinho.push(produto);
     }
-    localStorage.setItem('carrinho', JSON.stringify(carrinho));
-    atualizarContador();
+    saveCart();
 
     const button =  document.getElementById("adicionar-"+ind);
     // Oculta o botão e mostra a mensagem de adicionado
@@ -295,7 +313,7 @@ function alterarQuantidadeCarrinho(produtoId,index, delta) {
         } 
         carrinho[index]=produto
         // Update the cart in localStorage
-        localStorage.setItem('carrinho', JSON.stringify(carrinho));
+        saveCart();
 
         // Refresh the cart display
         const qtdeIn = document.getElementById("carrinhoqtd-"+produtoId);
@@ -330,7 +348,7 @@ function alteraQtdeCar(produtoId,index){
 
         carrinho[index]=produto
         // Update the cart in localStorage
-        localStorage.setItem('carrinho', JSON.stringify(carrinho));
+        saveCart();
 
         // Refresh the cart display
         console.log(produtoId)
@@ -424,6 +442,7 @@ function removerDoCarrinho(index) {
     localStorage.setItem('carrinho', JSON.stringify(carrinho));
     atualizarContador();
     mostrarCarrinho(); // Refresh the cart display
+    saveCart();
 }
 
 async function carregaFiltros() {
