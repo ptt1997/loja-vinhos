@@ -17,7 +17,7 @@ function renderPage(page) {
             <p class="descricao">${(produto.descricao)}</p>
             <p><strong>Valor unitário: R$ ${formataNumeros(produto.preco)}</strong></p>
             <div>
-                <label for="quantidade-${produto.id}">Quantidade: </label>
+                <label class="label-quantidade" for="quantidade-${produto.id}">Quantidade: </label>
                 <button onclick="alterarQuantidade(${produto.id}, -1)" style="color: red; border-radius: 50%; width: 30px; height: 30px; border: none;">
                     <i class="fas fa-minus"></i>
                 </button>

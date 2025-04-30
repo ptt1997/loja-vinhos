@@ -72,7 +72,9 @@ body {
     .produtos {
         grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Configuração para dispositivos móveis */
     }
-
+    .label-quantidade {
+        width: 150px;
+    }
     .produto {
         width: 200px; /* Configuração para dispositivos móveis */
     }
@@ -284,7 +286,7 @@ body {
 
 
 .search-input {
-    width: 400px; /* Adjust width for better appearance */
+    width: 350px; /* Adjust width for better appearance */
     padding: 10px; /* Padding for better appearance */
     border: 2px solid #2f0dee; /* Border styling */
     border-radius: 5px; /* Rounded corners */
@@ -455,9 +457,12 @@ body {
 
 .search-icon {
     position: absolute;
-    right: 10px; /* Position inside the input field */
+    right: 5px; /* Position inside the input field */
     top: 50%;
     transform: translateY(-50%);
     pointer-events: none;
     color: #333; /* Ensure the icon is visible */
+}
+.label-quantidade {
+
 }
