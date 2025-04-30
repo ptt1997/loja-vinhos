@@ -290,6 +290,8 @@ body {
     border-radius: 5px; /* Rounded corners */
     margin: 10px auto; /* Centering */
     display: block; /* Block display for centering */
+    font-weight: bold;
+    position: absolute;
 }
 
 .search-input:focus {
@@ -442,4 +444,20 @@ body {
 
 #cartMenu.modal.show {
     display: block;
+}
+.search-container {
+    position: relative; /* Ensure the container is relative for absolute positioning */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.search-icon {
+    position: absolute;
+    right: 10px; /* Position inside the input field */
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: #333; /* Ensure the icon is visible */
 }
