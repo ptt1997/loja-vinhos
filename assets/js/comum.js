@@ -223,6 +223,7 @@ function adicionarCarrinho(ind,blur = false) {
     if (blur &&  produto.quantidade <= 0) return
     if ((!produto.quantidade || produto.quantidade <= 0)) {
         produto.quantidade = 1
+        $("#quantidade-" + ind).val(1);
     }
     const existingProductIndex = carrinho.findIndex(item => item.id === produto.id);
 
