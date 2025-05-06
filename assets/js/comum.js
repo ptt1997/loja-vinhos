@@ -73,13 +73,14 @@ async function carregarProdutos() {
         .then(res => res.json())
         .then(data => {
             VinhosTabela=data;
+            console.log(data);
             Vinhos = data.map((produto,index) => ({
                 id:index,
                 descricao: produto.Descrição || "",
                 nome: produto["Nome do Vinho"] || "",
                 marca: produto.Marca || "",
                 imagem: produto["Link Imagem"] && produto["Link Imagem"].trim() !== '' ? produto["Link Imagem"] : 'assets/img/semfoto.jpeg',
-                preco: produto.Preço || 0 // Use 0 if not available
+                preco: Number(produto.Preço.replace('R$', '').replace('.', '').replace(',', '.')) || 0 // Use 0 if not available
             }));
             VinhosFiltados=Vinhos;
             renderPage(currentPage);
