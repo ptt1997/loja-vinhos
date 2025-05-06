@@ -80,7 +80,8 @@ async function carregarProdutos() {
                 nome: produto["Nome do Vinho"] || "",
                 marca: produto.Marca || "",
                 imagem: produto["Link Imagem"] && produto["Link Imagem"].trim() !== '' ? produto["Link Imagem"] : 'assets/img/semfoto.jpeg',
-                preco: produto.Preço || "0" // Use 0 if not available
+                preco: produto.Preço || "0", // Use 0 if not available
+                precoNum: Number(produto.Preço.replace('R$', '').replace('.', '').replace(',', '.')) || 0 // Use 0 if not available
             }));
             VinhosFiltados=Vinhos;
             renderPage(currentPage);
@@ -256,7 +257,7 @@ function enviarCarrinho(user) {
     let total = 0;
     let totalGarrafas = 0;
     carrinho.forEach(item => {
-        const itemTotal = item.preco * item.quantidade; // Calculate total for each item
+        const itemTotal = item.precoNum * item.quantidade; // Calculate total for each item
         mensagem += `${item.quantidade} - ${item.nome}\n`; // Format message
         total += itemTotal; // Update total
         totalGarrafas += item.quantidade; // Update total
@@ -321,10 +322,10 @@ function alterarQuantidadeCarrinho(produtoId,index, delta) {
         const qtdeIn = document.getElementById("carrinhoqtd-"+produtoId);
         qtdeIn.innerHTML = 'Quantidade: '+produto.quantidade;
         const qtdeTotaIn = document.getElementById("carrinhototalitem-"+produtoId);
-        qtdeTotaIn.innerHTML ="Valor: R$ "+formataNumeros(produto.preco * produto.quantidade);
+        qtdeTotaIn.innerHTML ="Valor: R$ "+formataNumeros(produto.precoNum * produto.quantidade);
         const totalValueElement = document.getElementById("totalValue");
         const totalGarrafasElement = document.getElementById("totalValueGar");
-        totalCarrinho+= delta*(produto.preco);
+        totalCarrinho+= delta*(produto.precoNum);
         totalGarrafas+=delta;
         totalValueElement.textContent = formataNumeros(totalCarrinho);
         totalGarrafasElement.textContent = totalGarrafas
@@ -352,10 +353,10 @@ function alteraQtdeCar(produtoId,index){
 
         // Refresh the cart display
         const qtdeTotaIn = document.getElementById("carrinhototalitem-"+produtoId.toString());
-        qtdeTotaIn.innerHTML ="R$ "+formataNumeros(produto.preco * produto.quantidade);
+        qtdeTotaIn.innerHTML ="R$ "+formataNumeros(produto.precoNum * produto.quantidade);
         const totalValueElement = document.getElementById("totalValue");
         const totalGarrafasElement = document.getElementById("totalValueGar");
-        totalCarrinho+= delta*(produto.preco);
+        totalCarrinho+= delta*(produto.precoNum);
         totalGarrafas+=delta;
         totalValueElement.textContent = formataNumeros(totalCarrinho);
         totalGarrafasElement.textContent = totalGarrafas;
@@ -375,7 +376,7 @@ function mostrarCarrinho() {
     totalGarrafas = 0;
 
     carrinho.forEach((item, index) => {
-        const itemTotal = item.preco * item.quantidade;
+        const itemTotal = item.precoNum * item.quantidade;
         totalCarrinho += itemTotal;
         totalGarrafas += item.quantidade;
     });
@@ -398,8 +399,8 @@ function mostrarCarrinho() {
                     <td >
                        <input onblur="alteraQtdeCar(${item.id},${index})" class="input-qtde" id="quantidadecar-${item.id}" name="quantidade-${item.id}" type="number" value="${item.quantidade}" max="99"  maxlength="2" min="0"  />
                     </td>
-                    <td  style="white-space: nowrap;text-align:start;font-weight: bolder;" id="valorunitario-${item.id}">R$ ${formataNumeros(item.preco)}</td>
-                    <td  style="white-space: nowrap;text-align:start;font-weight: bolder;" id="carrinhototalitem-${item.id}">R$ ${formataNumeros(item.preco * item.quantidade)}<div  id="carrinhototalitem-${item.id}"></div></td>
+                    <td  style="white-space: nowrap;text-align:start;font-weight: bolder;" id="valorunitario-${item.id}">${formataNumeros(item.preco)}</td>
+                    <td  style="white-space: nowrap;text-align:start;font-weight: bolder;" id="carrinhototalitem-${item.id}">R$ ${formataNumeros(item.precoNum * item.quantidade)}<div  id="carrinhototalitem-${item.id}"></div></td>
                     <td style="font-size:15px">
                         <button style="border:none;color:red;background:none;" onclick="removerDoCarrinho(${index})">
                             <i class="fas fa-trash"></i>
@@ -451,8 +452,8 @@ async function carregaFiltros() {
                 marcas.push(item.marca);
             }
         }
-        if (item.preco > maiorValor){
-            maiorValor= item.preco;
+        if (item.precoNum > maiorValor){
+            maiorValor= item.precoNum;
         }
     });
    
@@ -486,8 +487,7 @@ function filtra() {
         // if (selectedMarcas.length > 0) {
         //     insere = insere && selectedMarcas.includes(item.marca);
         // }
-        let preco = Number(item.preco.replace('R$', '').replace('.', '').replace(',', '.'))
-        insere = insere && (preco >= minPrice && preco <= maxPrice);
+        insere = insere && (item.precoNum >= minPrice && item.precoNum <= maxPrice);
 
         return insere;
     });
