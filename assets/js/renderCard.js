@@ -24,7 +24,7 @@ function renderPage(page,limpar = false) {
                 <button onclick="alterarQuantidade(${produto.id}, -1)" style="color: red; border-radius: 50%; width: 30px; height: 30px; border: none;">
                     <i class="fas fa-minus"></i>
                 </button>
-                <input id="quantidade-${produto.id}" name="quantidade-${produto.id}"  onblur="adicionarCarrinho(${produto.id},true)" type="number" value="" max="99" min="0" style="width: 50px; text-align: center;font-size: 18px;" />
+                <input id="quantidade-${produto.id}" name="quantidade-${produto.id}"  onblur="adicionarCarrinho(${produto.id},true)" type="number" value="" max="99" min="0" style="width: 50px; text-align: center;font-size: 18px;" onkeydown="if(event.key === 'Enter') adicionarCarrinho(${produto.id})" />
                 <button onclick="alterarQuantidade(${produto.id}, 1)" style="color: green; border-radius: 50%; width: 30px; height: 30px; border: none;">
                     <i class="fas fa-plus"></i>
                 </button>
