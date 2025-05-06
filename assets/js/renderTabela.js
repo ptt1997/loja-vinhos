@@ -19,14 +19,10 @@ function renderPage(page) {
                 //    ` <button onclick="alterarQuantidade(${produto.id}, 1)" style="color: green; border-radius: 50%; width: 10px; height: 10px; border: none;padding:0; background:none">
                 //         <i class="fas fa-plus"></i>
                 //     </button>`+
-                    `<button class="botao-small" style="background: none;border-radius: 5px;margin-left:5px;">
-                        <div id="adicionar-${produto.id}">
-                           
-                        </div>
+                    `
                         <span  id="adicionado-${produto.id}" style="display: none;color: green;">
                             OK
                         </span>
-                    </button>
                 </td>
             </tr>
         `;
