@@ -337,9 +337,7 @@ function alteraQtdeCar(produtoId,index){
     if (produto) {
         let delta = qtdeNova-produto.quantidade;
         // Update the quantity
-        console.log(qtdeNova);
         produto.quantidade = qtdeNova;
-        console.log(produto.quantidade);
         // Ensure quantity stays within bounds
         if (produto.quantidade <= 0){
             removerDoCarrinho(index);
@@ -352,9 +350,7 @@ function alteraQtdeCar(produtoId,index){
         saveCart();
 
         // Refresh the cart display
-        console.log(produtoId)
         const qtdeTotaIn = document.getElementById("carrinhototalitem-"+produtoId.toString());
-        console.log(produto.quantidade)
         qtdeTotaIn.innerHTML ="R$ "+formataNumeros(produto.preco * produto.quantidade);
         const totalValueElement = document.getElementById("totalValue");
         const totalGarrafasElement = document.getElementById("totalValueGar");
@@ -482,19 +478,19 @@ function filtra() {
     VinhosFiltados = Vinhos.filter(item => {
         let insere = true;
 
-        if (pesquisa) {
+        if (pesquisa && pesquisa !="") {
             insere = insere && item.nome.toLowerCase().includes(pesquisa);
         }
 
-        if (selectedMarcas.length > 0) {
-            insere = insere && selectedMarcas.includes(item.marca);
-        }
+        // if (selectedMarcas.length > 0) {
+        //     insere = insere && selectedMarcas.includes(item.marca);
+        // }
 
         insere = insere && (item.preco >= minPrice && item.preco <= maxPrice);
 
         return insere;
     });
-    renderPage(1);
+    renderPage(1,true);
 }
 
 

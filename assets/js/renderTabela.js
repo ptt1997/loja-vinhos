@@ -10,7 +10,7 @@ function renderPage(page) {
             <tr class="texto-tabela">
                 <td>${produto.imagem !="assets/img/semfoto.jpeg" ? `<button style="border-radius: 10px;" onclick="montadetalhes(${produto.id})"><i class="fas fa-camera"></i></button>`: ""}</td>
               <td style="white-space: nowrap;text-align:start;font-weight: bolder;"  onclick="document.getElementById('quantidade-${produto.id}').focus();">${produto.nome}</td>
-                <td style="font-weight: bolder;background:#fff1ce;white-space: nowrap;">R$ ${formataNumeros(produto.preco)}</td>
+                <td style="font-weight: bolder;background:#fff1ce;white-space: nowrap;">${formataNumeros(produto.preco)}</td>
                 <td>`+
                 //    ` <button onclick="alterarQuantidade(${produto.id}, -1)" style="color: red; border-radius: 50%; width: 10px; height: 10px; border: none; padding:0; background:none;">
                 //         <i class="fas fa-minus"></i>

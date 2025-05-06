@@ -1,8 +1,10 @@
 let add= false;
-function renderPage(page) {
+function renderPage(page,limpar = false) {
     const container = document.getElementById("produtos");
 
-   // container.innerHTML = '';
+    if (limpar){
+        container.innerHTML = '';
+    }
 
     const startIndex = (page - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
@@ -16,13 +18,13 @@ function renderPage(page) {
             <h3 class="titulo-card">${produto.nome}</h3>
             <img src="${produto.imagem}" alt="${produto.nome}" class="imagensCard" onclick="montadetalhes(${produto.id})"/>
             <p class="descricao">${(produto.descricao)}</p>
-            <p><strong>Valor unitário: R$ ${formataNumeros(produto.preco)}</strong></p>
+            <p><strong>Valor unitário: ${formataNumeros(produto.preco)}</strong></p>
             <div>
                 <label class="label-quantidade" for="quantidade-${produto.id}">Quantidade: </label>
                 <button onclick="alterarQuantidade(${produto.id}, -1)" style="color: red; border-radius: 50%; width: 30px; height: 30px; border: none;">
                     <i class="fas fa-minus"></i>
                 </button>
-                <input id="quantidade-${produto.id}" name="quantidade-${produto.id}" type="number" value="" max="99" min="0" style="width: 50px; text-align: center;font-size: 18px;" />
+                <input id="quantidade-${produto.id}" name="quantidade-${produto.id}"  onblur="adicionarCarrinho(${produto.id},true)" type="number" value="" max="99" min="0" style="width: 50px; text-align: center;font-size: 18px;" />
                 <button onclick="alterarQuantidade(${produto.id}, 1)" style="color: green; border-radius: 50%; width: 30px; height: 30px; border: none;">
                     <i class="fas fa-plus"></i>
                 </button>
@@ -38,12 +40,12 @@ function renderPage(page) {
         </div>
         `;
     });
-    
     if (VinhosFiltados.length === 0) {
         container.innerHTML = '<p>Nenhum produto encontrado.</p>'; // Display message if no products found
-        table.style.display = 'none';
+        //table.style.display = 'none';
       //  renderPagination();
     } else {
+        container.innerHTML =  container.innerHTML.replace('<p>Nenhum produto encontrado.</p>', '');
         //renderPagination();
     }
    // container.scrollTop = 0; // Scroll to the top of the container
