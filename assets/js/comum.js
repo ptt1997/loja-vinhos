@@ -80,7 +80,7 @@ async function carregarProdutos() {
                 nome: produto["Nome do Vinho"] || "",
                 marca: produto.Marca || "",
                 imagem: produto["Link Imagem"] && produto["Link Imagem"].trim() !== '' ? produto["Link Imagem"] : 'assets/img/semfoto.jpeg',
-                preco: Number(produto.Preço.replace('R$', '').replace('.', '').replace(',', '.')) || 0 // Use 0 if not available
+                preco: produto.Preço || "0" // Use 0 if not available
             }));
             VinhosFiltados=Vinhos;
             renderPage(currentPage);
@@ -486,8 +486,8 @@ function filtra() {
         // if (selectedMarcas.length > 0) {
         //     insere = insere && selectedMarcas.includes(item.marca);
         // }
-
-        insere = insere && (item.preco >= minPrice && item.preco <= maxPrice);
+        let preco = Number(item.preco.replace('R$', '').replace('.', '').replace(',', '.'))
+        insere = insere && (preco >= minPrice && preco <= maxPrice);
 
         return insere;
     });
