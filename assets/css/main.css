@@ -112,6 +112,11 @@ body {
     background: #a30000;
 }
 .botao-small {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
     background: #8B0000;
     color: white;
     border: none;
