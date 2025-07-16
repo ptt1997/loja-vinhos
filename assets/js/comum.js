@@ -248,7 +248,10 @@ function adicionarCarrinho(ind,blur = false) {
         button.style.display = 'inline-block'; // Mostra o botão novamente
     }, 2000); // Duração da exibição da mensagem
 }
-
+function enviaMensagemVazia(){
+    const urlWhats = `https://wa.me/${numeroWhatsApp}`;
+    window.open(urlWhats, '_blank');
+}
 function enviarCarrinho(user) {
 
     carrinho.sort((a, b) => a.nome.localeCompare(b.nome));
