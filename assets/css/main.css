@@ -98,7 +98,7 @@ body {
     .produtos-tabela td:nth-child(2) { /* Coluna Vinho */
         word-break: break-word; /* Permite quebra de palavra */
         white-space: normal;    /* Permite quebra de linha */
-        max-width: 120px; /* Ajuste conforme necessário */
+        /* max-width: 120px; /* Ajuste conforme necessário */
     }
 }
 
@@ -394,7 +394,7 @@ body {
 
 .produtos-tabela th, .produtos-tabela td {
     border: 1px solid #ddd;
-    padding: 8px;
+    padding: 6px;
     text-align: center;
     max-height: 50px;
 }
