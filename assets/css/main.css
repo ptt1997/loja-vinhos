@@ -94,6 +94,12 @@ body {
     .input-qtde {
         width: 25px; text-align: center;
     }
+
+    .produtos-tabela td:nth-child(2) { /* Coluna Vinho */
+        word-break: break-word; /* Permite quebra de palavra */
+        white-space: normal;    /* Permite quebra de linha */
+        max-width: 120px; /* Ajuste conforme necessário */
+    }
 }
 
 .produto h3 {
