@@ -261,7 +261,7 @@ function enviarCarrinho(user) {
     let totalGarrafas = 0;
     carrinho.forEach(item => {
         const itemTotal = item.precoNum * item.quantidade; // Calculate total for each item
-        mensagem += `${item.quantidade} - ${item.nome}\n`; // Format message
+        mensagem += `${item.quantidade} - ${item.nome} - ${item.preco}\n`; // Format message
         total += itemTotal; // Update total
         totalGarrafas += item.quantidade; // Update total
     });
