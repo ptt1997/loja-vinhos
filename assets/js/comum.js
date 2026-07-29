@@ -1,10 +1,10 @@
 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwZm5iMI0bDPnES6Hhkbev0HmylFwDtcHFQXZZ6LVdlqBX7OAS5ySLLLLqB2qpr-MjS/exec";
 
 function getProdutosUrl() {
-    if (window.location.protocol === "file:") {
+   
         return GOOGLE_SCRIPT_URL;
-    }
-    return "/api/produtos";
+    
+   
 }
 const numeroWhatsApp = "5546920001218";
 var Vinhos = [];
